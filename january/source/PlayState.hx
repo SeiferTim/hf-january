@@ -9,6 +9,7 @@ import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
 import flixel.ui.FlxButton;
 import flixel.math.FlxMath;
+import flixel.util.FlxArrayUtil;
 import flixel.util.FlxTimer;
 import music.MIDI;
 import openfl.Assets;
@@ -37,8 +38,8 @@ class PlayState extends FlxState
 	/* SPRITES */
 	private static var sky:FlxSprite;		// sprite of the sky
 	private static var mountain:FlxSprite;	// sprite of the distant mountain
-	private static var player:Player;		// the player sprite
-	private static var snow:FlxGroup;		// all of the snowflakes
+	public static var player:Player;		// the player sprite
+	public static var snow:FlxGroup;		// all of the snowflakes
 	
 	/* TEXT RELATED */
 	public static var feedback:Text;		// the feedback text for secret features
@@ -136,7 +137,7 @@ class PlayState extends FlxState
 		flamTimer.start(flamRate);
 		
 		// Set Initial Mode to Ionian or Aeolian.
-		Mode.index = Helper.pickFrom(0, 4);
+		Mode.index = FlxG.random.getObject([0, 4]);
 		Mode.init();
 		
 		

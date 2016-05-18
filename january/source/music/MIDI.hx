@@ -153,7 +153,7 @@ class MIDI
 		bytes.clear();
 	}
 	
-	public static function log(sound:Dynamic, velocity:Float):Void
+	public static function log(sound:String, velocity:Float):Void
 	{					
 		var pitch:Int = 0;
 		if (sound != null)
@@ -210,7 +210,7 @@ class MIDI
 				trackEvents.push(144);				//	NOTE ON
 			
 			trackEvents.push(pitch);				//	NOTE PITCH
-			trackEvents.push(velocity);				//	NOTE VELOCITY
+			trackEvents.push(Std.int(velocity));				//	NOTE VELOCITY
 			timer = time = 0;
 			
 			logged = true;
@@ -239,7 +239,7 @@ class MIDI
 		/*	add 128 decimal to each precding byte. These bytes will all be over 0x80 (0x80 to 0xFF range), meaning there are more bytes left to read. */
 		while (quotient != 0)
 		{
-			bytes.splice(0, 0, (quotient % 128) + 128);
+			bytes.unshift((quotient % 128) + 128);
 			quotient = Math.floor(quotient/128);
 		}
 			

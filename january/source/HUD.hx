@@ -1,6 +1,8 @@
 package;
 import flixel.FlxG;
 import flixel.text.FlxText;
+import music.Note;
+import openfl.display.StageDisplayState;
 import openfl.events.MouseEvent;
 
 class HUD
@@ -50,12 +52,12 @@ class HUD
 		
 		if (FlxG.mouse.visible)
 		{
-			FlxG.mouse.hide();
+			FlxG.mouse.visible = false;
 			FlxG.stage.removeEventListener(MouseEvent.MOUSE_DOWN, MIDI.generate);
 		}
 		else
 		{
-			FlxG.mouse.show(); 
+			FlxG.mouse.visible = true; 
 			FlxG.stage.addEventListener(MouseEvent.MOUSE_DOWN, MIDI.generate);
 		}
 		
@@ -74,8 +76,8 @@ class HUD
 		
 		// Log note name, volume and pan to HUD
 		var loggedNote: String = enharmonic(getQualifiedClassName(Note.lastAbsolute));	
-		var loggedVolume: String = int( (volume*100)*(1/Note.MAX_VOLUME) ).toString() + "%";		
-		var loggedPan: String = int(pan*100).toString();
+		var loggedVolume: String = Std.int( (volume*100)*(1/Note.MAX_VOLUME) ).toString() + "%";		
+		var loggedPan: String = Std.int(pan*100).toString();
 		
 		if (loggedPan.match("-") != null)
 		{

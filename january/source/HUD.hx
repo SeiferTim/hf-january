@@ -1,7 +1,12 @@
 package;
 import flixel.FlxG;
 import flixel.text.FlxText;
+import music.Intervals;
+import music.Key;
+import music.MIDI;
+import music.Mode;
 import music.Note;
+import music.Scale;
 import openfl.display.StageDisplayState;
 import openfl.events.MouseEvent;
 
@@ -75,11 +80,11 @@ class HUD
 		row1.text = "";
 		
 		// Log note name, volume and pan to HUD
-		var loggedNote: String = enharmonic(getQualifiedClassName(Note.lastAbsolute));	
-		var loggedVolume: String = Std.int( (volume*100)*(1/Note.MAX_VOLUME) ).toString() + "%";		
-		var loggedPan: String = Std.int(pan*100).toString();
+		var loggedNote: String = enharmonic(Note.lastAbsolute);	
+		var loggedVolume: String = Std.string(Std.int( (volume * 100) * (1 / Note.MAX_VOLUME))) + "%";		
+		var loggedPan: String = Std.string(Std.int(pan * 100));
 		
-		if (loggedPan.match("-") != null)
+		if (loggedPan.indexOf("-") != -1)
 		{
 			loggedPan = loggedPan.substring(1);
 			loggedPan = loggedPan + "% L";
@@ -100,7 +105,7 @@ class HUD
 	 */		
 	public static function logMode():Void
 	{
-		var keyLetter:String = enharmonic(getQualifiedClassName(Intervals.loadout.one1));
+		var keyLetter:String = enharmonic(Intervals.loadout.one1);
 		
 		if (Scale.isPentatonic)
 		{
@@ -118,7 +123,7 @@ class HUD
 	}
 	
 	/** Logs Key Data to HUD. */		
-	public static function logEvent(chordTones:Array<Dynamic> = null):Void
+	public static function logEvent(chordTones:Array<String> = null):Void
 	{
 		//FlxG.log("logEvent()");
 		
@@ -127,7 +132,7 @@ class HUD
 			var chordName:String = "";
 			for (i in 0...chordTones.length - 1)
 			{
-				var actualName: String = enharmonic(getQualifiedClassName(chordTones[i]));
+				var actualName: String = enharmonic(chordTones[i]);
 				chordName += actualName + " ";
 			}
 			
@@ -137,24 +142,25 @@ class HUD
 	
 	private static function enharmonic(text:String):String
 	{
-		text = text.slice(0,-1);
-		
-		if (text.search(findSharp) == 1)
+		text = text.substr(0, text.length);
+		if (findSharp.match(text))
 		{
-			text = text.replace(findSharp, "");
-			
-			for (i in 0...Key.LETTERS.length - 1)
+			if (findSharp.matchedPos().pos == 1)
 			{
-				if (text == Key.LETTERS[i])
+				text = findSharp.replace(text, "");
+				
+				for (i in 0...Key.LETTERS.length - 1)
 				{
-					text = Key.LETTERS[i+1];
-					break;
+					if (text == Key.LETTERS[i])
+					{
+						text = Key.LETTERS[i+1];
+						break;
+					}
 				}
+				
+				text += "b";
 			}
-			
-			text += "b";
 		}
-		
 		return text;
 	}
 	

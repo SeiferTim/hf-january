@@ -49,7 +49,7 @@ class Snowflake extends FlxSprite
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public function Snowflake():Void
+	public function new()
 	{	
 		super();
 		exists = false;
@@ -215,7 +215,7 @@ class Snowflake extends FlxSprite
 	}
 	
 	/** Play a note! Takes in an array of classes, and will pick one randomly. */	
-	private function _play(options: Array):Void
+	private function _play(options: Array<String>):Void
 	{				
 		var randomNote: Class = noteAdjustments(options);
 		var sound: FlxSound;
@@ -394,9 +394,9 @@ class Snowflake extends FlxSprite
 		}
 	}
 	
-	private function noteAdjustments(options: Array):Class
+	private function noteAdjustments(options: Array<String>):String
 	{
-		var note: Class;
+		var note: String;
 		var random:Int;
 		
 		// NOTE PREVENTIONS

@@ -5,13 +5,20 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
 import flixel.ui.FlxButton;
 import flixel.math.FlxMath;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxTimer;
+import music.Key;
 import music.MIDI;
+import music.Mode;
+import music.Note;
+import music.Pedal;
+import music.Playback;
+import music.Scale;
 import openfl.Assets;
 import openfl.utils.Object;
 
@@ -143,14 +150,184 @@ class PlayState extends FlxState
 		
 		super.create();
 	}
-
-	override public function destroy():Void
-	{
-		super.destroy();
-	}
-
+	
+	/** Called every frame. */
 	override public function update(elapsed:Float):Void
 	{
-		super.update(elapsed);
+		// Timer callback, used to flam out notes in chords, etc. Awesome!
+		flamTimer.onComplete = function(_) { 
+		
+			if (flamNotes[0] != null && flamCounter <= flamNotes.length - 1)
+			{
+				var note:FlxSound = flamNotes[flamCounter];
+				note.play();
+				
+				var classToLog:Class<Note>;
+				var volToLog:Float;
+				
+				// Always pass the primary timbre to the MIDI logging system.
+				if (getQualifiedClassName(note.classType).substr(0,1) == "_")
+				{
+					classToLog = getDefinitionByName(getQualifiedClassName(note.classType).substr(1));
+					volToLog = note.volume * Snowflake._volumeMod;
+				}
+				else
+				{
+					classToLog = note.classType;
+					volToLog = note.volume;
+				}
+					
+				MIDI.log(classToLog, volToLog);
+				flamCounter++;
+				flamTimer.reset(flamRate);
+			}
+			else
+			{
+				flamRate = FlxG.random.int(25, 75);		// Fluctuate the arpeggio rate.
+				flamCounter = 0;
+				flamNotes = [];
+				flamTimer.abort();
+			}
+		}
+		
+		// Spawn snowflakes when timer expires.
+		spawnTimer.onComplete = function(_) {
+			if (spawnRate <= BLIZZARD)
+				spawnRate = BLIZZARD;
+				
+			spawnTimer.reset(spawnRate);			
+			Snowflake.manage();
+			
+			if (onAutoPilot)
+			{
+				if (player.tongueUp)
+				{
+					if (FlxG.random.bool(2))
+						player.tongueUp = !player.tongueUp;
+				}
+				else
+				{
+					if (FlxG.random.bool(10))
+							player.tongueUp = true;
+				}
+				
+				if (FlxG.random.bool(2))
+					autoPilotMovement = FlxG.random.getObject(["Left", "Right", "Still"]); 
+			}
+		}
+						
+		super.update(elapsed );
+		
+		// Loop Sky Background
+		if (sky.x < -716) sky.x = 0;
+		
+		// Collision Check
+		if (player.tongueUp) FlxG.overlap(snow, player, onLick);
+		
+		// Key input checks for advanced features!.
+		if (FlxG.keys.justPressed("PLUS"))		moreSnow();
+		if (FlxG.keys.justPressed("MINUS"))		lessSnow();
+		
+		if (FlxG.keys.justPressed("K"))			Key.cycle();
+		if (FlxG.keys.justPressed("COMMA"))		Mode.cycle("Left");
+		if (FlxG.keys.justPressed("PERIOD"))	Mode.cycle("Right");
+		if (FlxG.keys.justPressed("SLASH")) 	Scale.toPentatonic();
+		if (FlxG.keys.justPressed("P")) 		Pedal.toggle();
+		
+		if (FlxG.keys.justPressed("LBRACKET"))	Playback.cycle("Left");
+		if (FlxG.keys.justPressed("RBRACKET"))	Playback.cycle("Right");
+		if (FlxG.keys.justPressed("ENTER")) 	Playback.polarity();
+		if (FlxG.keys.justPressed("BACKSLASH"))	Playback.resetRestart();
+		
+		if (FlxG.keys.justPressed("SHIFT"))		Playback.staccato();
+		if (FlxG.keys.justPressed("I"))			improvise();
+		if (FlxG.keys.justPressed("ZERO"))		autoPilot();
+		
+		if (FlxG.keys.justPressed("H"))			HUD.toggle();
+		if (FlxG.keys.justPressed("M"))			HUD.midi();
+		
+		// Keep MIDI Timer in check, to get appropriate time values for logging.
+		if (Note.lastAbsolute != null)
+			MIDI.timer += elapsed;
+		if (MIDI.logged == true)
+		{
+			MIDI.timer = 0;
+			MIDI.logged = false;
+		}
+	}
+	
+	/**
+	 * Called when the player's tongue is up, and hits a snowflake.
+	 *  
+	 * @param SnowRef		The Snowflake licked.
+	 * @param PlayerRef		The Player sprite.
+	 * 
+	 */
+	public function onLick(SnowRef: Snowflake, PlayerRef: Player):Void
+	{									
+		SnowRef.onLick();
+		
+		if (Playback.mode == "Repeat")
+			feedback.onLick(SnowRef);
+
+		spawnRate -= SPAWNRATE_DECREMENTER;
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// ADVANCED FEATURES /////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	private static function moreSnow():Void
+	{
+		if (spawnRate <= SHOWER)
+		{
+			spawnRate = BLIZZARD;
+			feedback.show("Blizzard");
+		}
+		else
+		{
+			spawnRate = SHOWER;
+			feedback.show("Shower");
+		}
+	}
+	
+	private static function lessSnow():Void
+	{			
+		if (spawnRate < SHOWER)
+		{
+			spawnRate = SHOWER;
+			feedback.show("Shower");
+		}
+		else
+		{
+			spawnRate = FLURRY;
+			feedback.show("Flurry");
+		}
+	}
+	
+	private static function autoPilot():Void
+	{
+		onAutoPilot = !onAutoPilot;
+		
+		if (onAutoPilot)
+		{
+			feedback.show("Auto Pilot On");
+			player.tongueUp = true;
+		}
+		else
+		{
+			feedback.show("Auto Pilot Off");
+			player.tongueUp = false;
+		}
+	}
+	
+	private function improvise():Void
+	{
+		inImprovMode = !inImprovMode;
+		
+		if (inImprovMode)
+			feedback.show("Improv Mode On");
+		else
+			feedback.show("Improv Mode Off");
 	}
 }

@@ -1,4 +1,5 @@
 package music;
+import haxe.ds.IntMap;
 import openfl.events.MouseEvent;
 import openfl.net.FileReference;
 import openfl.utils.ByteArray;
@@ -82,9 +83,9 @@ class MIDI
 	/** Whether or not new MIDI log has been recorded. */
 	public static var logged:Bool;
 	/** An object full of the various note values that have been recorded, used to prevent overlaps. */
-	private static var pitchesHeard:Object = {};
+	private static var pitchesHeard:Map<Int, Int>;
 	/** An object full of the various note values that have been recorded, used to prevent overlaps. */
-	private static var pitchesHeard2:Object = {};
+	private static var pitchesHeard2:Map<Int, Int>;
 	/** Note Ons that haven't been set to Note Off yet. */
 	private static var unresolvedPitches:Array<Int> = [];
 	/** Note Ons that haven't been set to Note Off yet. */
@@ -171,8 +172,14 @@ class MIDI
 			for (j in 0...timeBytes.length)
 				trackEvents.push(timeBytes[j]);		//	EVENT TIME (SINCE LAST)
 			
+			if (pitchesHeard == null)
+				pitchesHeard = new Map<Int, Int>();
+			if (pitchesHeard2 == null)
+				pitchesHeard2 = new Map<Int, Int>();
+			
+				
 			// If we've already heard this pitch before,
-			if (Snowflake.timbre != "Secondary" && pitchesHeard[pitch] != null)
+			if (SnowflakeManager.timbre != "Secondary" && pitchesHeard.get(pitch) != null)
 			{
 				// Add a note off event.
 				trackEvents.push(128);		// NOTE OFF 
@@ -183,12 +190,12 @@ class MIDI
 			else
 			{
 				// Add to the array of heard pitches.
-				pitchesHeard[pitch] = pitch;
+				pitchesHeard.set(pitch, pitch);
 				// Push the pitch to the list of unresolved note ons.
 				unresolvedPitches.push(pitch);
 			}
 			
-			if (Snowflake.timbre == "Secondary" && pitchesHeard2[pitch] != null)
+			if (SnowflakeManager.timbre == "Secondary" && pitchesHeard2.get(pitch) != null)
 			{
 				// Add a note off event.
 				trackEvents.push(129);		// NOTE OFF 
@@ -199,12 +206,12 @@ class MIDI
 			else
 			{
 				// Add to the array of heard pitches.
-				pitchesHeard2[pitch] = pitch;
+				pitchesHeard2.set(pitch, pitch);
 				// Push the pitch to the list of unresolved note ons.
 				unresolvedPitches2.push(pitch);
 			}
 			
-			if (Snowflake.timbre == "Secondary")
+			if (SnowflakeManager.timbre == "Secondary")
 				trackEvents.push(145);				//	NOTE ON
 			else
 				trackEvents.push(144);				//	NOTE ON

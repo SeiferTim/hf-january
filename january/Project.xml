@@ -34,6 +34,8 @@
 	<assets path="assets/music" include="*.mp3" if="flash" type="music" embed="true" />
 	<assets path="assets/sounds" include="*.mp3" if="flash" type="sound" embed="true" />
 	<assets path="assets/sounds" include="*.wav" unless="flash" type="sound" embed="true" />
+	<assets path="assets/sounds/notes" include="*.mp3" rename="notes" if="flash" type="sound" embed="true" />
+	<assets path="assets/sounds/notes" include="*.wav" rename="notes" unless="flash" type="sound" embed="true" />
 	<assets path="assets/data" rename="data" include="*.txt" type="text" embed="true" />
 	<assets path="assets/fonts" include="*.ttf" embed="true" />
 	
@@ -71,7 +73,7 @@
 	<!--haxedef name="FLX_NO_GAMEPAD" /-->
 
 	<!--Disable the Flixel core sound tray-->
-	<!--haxedef name="FLX_NO_SOUND_TRAY" /-->
+	<haxedef name="FLX_NO_SOUND_TRAY" />
 
 	<!--Disable the Flixel sound management code-->
 	<!--haxedef name="FLX_NO_SOUND_SYSTEM" /-->

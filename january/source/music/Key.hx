@@ -41,7 +41,7 @@ class Key
 				if (currentInterval == intervalToAvoid)
 				{
 					// Shift the interval for the next note to be played up or down one spot, to a chord tone.
-					for (i in 0...Intervals.DATABASE.length - 1)
+					for (i in 0...Intervals.DATABASE.length)
 					{
 						if (currentInterval == Intervals.DATABASE[i])
 						{

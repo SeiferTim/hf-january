@@ -1,13 +1,15 @@
 package snowflakes;
 import flixel.FlxG;
+import music.Mode;
+import music.Note;
 
 class Chord extends Snowflake
 {
 		
 	/** Default volume level for Chord Tones. */
-	public static inline var VOLUME:Float = Note.MAX_VOLUME * 0.4;
+	public static var VOLUME:Float = Note.MAX_VOLUME * 0.4;
 	
-	public function Chord()
+	public function new()
 	{
 		super();
 		
@@ -20,7 +22,7 @@ class Chord extends Snowflake
 		volume = FlxG.random.float(Note.MAX_VOLUME * 0.33, Note.MAX_VOLUME * 0.83);
 	}
 	
-	public override function onLick():void
+	public override function onLick():Void
 	{
 		super.onLick();
 		
@@ -29,9 +31,9 @@ class Chord extends Snowflake
 		playChord();
 	}
 	
-	public override function update():void
+	public override function update(elapsed:Float):Void
 	{
-		super.update();
+		super.update(elapsed);
 		
 		animation.play("default");
 	}

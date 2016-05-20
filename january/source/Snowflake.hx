@@ -1,8 +1,23 @@
 package;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.system.FlxAssets.FlxSoundAsset;
 import flixel.system.FlxSound;
+import music.Intervals;
+import music.Key;
+import music.MIDI;
+import music.Mode;
+import music.Note;
+import music.Pedal;
+import music.Playback;
+import music.Scale;
 import openfl.utils.Object;
+import snowflakes.Chord;
+import snowflakes.Harmony;
+import snowflakes.Octave;
+import snowflakes.Small;
+import snowflakes.Transpose;
+import snowflakes.Vamp;
 
 class Snowflake extends FlxSprite
 {
@@ -17,12 +32,7 @@ class Snowflake extends FlxSprite
 	var pan:Float = FlxG.random.float(-1, 1);
 	/** Whether the Snowflake in question allows for a pedal tone. */
 	var pedalAllowed:Bool;
-	/** Used to store Intervals.loadout */
-	static var i:Object;
-	/** Whether to use primary or secondary timbre set. */
-	public static var timbre:String;
-	/** Volume Modifier for Secondary Timbre, used to divide original volume. */
-	public static var _volumeMod:Float = 1.5;
+	
 	
 	// List of Secondary Timbre Classes
 	//_C1; _Cs1; _D1; _Ds1; _E1; _F1; _Fs1; _G1; _Gs1; _A1; _As1; _B1; _C2; _Cs2; _D2; _Ds2; _E2; _F2; _Fs2; _G2; _Gs2; _A2; _As2; _B2; _C3; _Cs3; _D3; _Ds3; _E3; _F3; _Fs3; _G3; _Gs3; _A3; _As3; _B3; _C4; _Cs4; _D4; _Ds4; _E4; _F4; _Fs4; _G4; _Gs4; _A4; _As4; _B4;
@@ -36,13 +46,11 @@ class Snowflake extends FlxSprite
 	/** Type of the last licked snowflake. */
 	private static var lastLickedType:String;
 	/** Horizontal modifier for snowflake movement. */
-	var windX:Int = 0;
+	var windX:Float = 0;
 	/** Vertical modifier for snowflake movement. */
-	var windY:Int = 0;
+	var windY:Float = 0;
 	
-	// Snowflake spawning probabilities
-	private static var flakes:Array<String> = ["Small", "Octave", "Harmony", "Chord", "Vamp", "Transpose"];
-	public static var weights:Array<Float> = [ 88.5  ,  3.5	 ,  3.5		,  2	 ,	2	 ,  0.5		  ];
+	
 	
 	// List of classes for getDefinitionByName() to use
 	//Small; Octave; Harmony; Chord; Vamp; Transpose;
@@ -55,17 +63,6 @@ class Snowflake extends FlxSprite
 		exists = false;
 	}
 	
-	/** Determines which snowflakes to spawn.  */
-	public static function manage():Void
-	{													
-		// All Flakes are Spawned based on weighted probability, except for the first one.
-		var flakeID:String = flakes[FlxG.random.weightedPick(weights)];
-		
-		// use string above to instantiate proper Snowflake Subclass.
-		var subClass:Class<Snowflake> = getDefinitionByName( "snowflakes." + flakeID );			
-		var flake:Snowflake = PlayState.snow.recycle(subClass);
-		flake.spawn(flakeID);		
-	}
 	
 	/** Spawns snowflakes. */
 	public function spawn(flakeType:String, spawnX:Float = 0):Void
@@ -82,25 +79,25 @@ class Snowflake extends FlxSprite
 		exists = true;
 	}
 	
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{			
 		//////////////
 		// MOVEMENT //
 		//////////////
 		
-		windX = 5 + (FlxG.score * 0.025);
+		windX = 5 + (Reg.score * 0.025);
 	
 		if (windX >= 10)
 			windX = 10;
 		
 		velocity.x = (Math.cos(y / windX) * windX);
 			
-		if (FlxG.score == 0)
+		if (Reg.score == 0)
 			velocity.y = 15;
 		else
 			velocity.y = 5 + (Math.cos(y / 25) * 5) + windY;
 		
-		super.update();
+		super.update(elapsed);
 		
 		///////////////
 		// COLLISION //
@@ -117,11 +114,11 @@ class Snowflake extends FlxSprite
 	{							
 		super.kill();
 		
-		FlxG.score++;
+		Reg.score++;
 		
 		// Count How Many of Each Flake Type is Licked, For Custom MIDI File Name
 		if (type != "Small")
-			PlayState.scores[type]++;
+			PlayState.scores.set(type, PlayState.scores.get(type) + 1);
 		
 		lastLickedType = type;
 	}
@@ -133,7 +130,6 @@ class Snowflake extends FlxSprite
 	/** Determines which kind of note to play. */
 	private function playNote():Void
 	{									
-		i = Intervals.loadout;
 		
 		if (Playback.mode == "Repeat")									
 			playSequence();
@@ -151,29 +147,34 @@ class Snowflake extends FlxSprite
 	private function playSequence():Void
 	{
 		//FlxG.log("playback()");
-		
+		var sound:FlxSound;
 		if (Playback.sequence.length == 0)
 		{
-			FlxG.play(Note.lastAbsolute, volume, pan);
+			PlayState.playSound(Note.lastAbsolute, volume, pan);
+			
 			Playback.index = 1;
 		}
 		else
 		{				
 			// Convert Interval String in Sequence to Note, then play it.
 			var id:String = Playback.sequence[Playback.index];
-			var sound:FlxSound;
 			
-			if (timbre == "Primary")
-				sound = FlxG.play(i[id], volume, pan);
+			
+			if (SnowflakeManager.timbre == "Primary")
+			{
+				
+				sound = PlayState.playSound(Intervals.loadout.get(id), volume, pan).note;
+			}
 			else
 			{
-				var modifiedNote: Class = getDefinitionByName("_" + getQualifiedClassName(i[id] ) ) ;
-				sound = FlxG.play(modifiedNote, volume/_volumeMod, pan);
+				var modifiedNote:String = "_" + Intervals.loadout.get(id);
+				sound = PlayState.playSound(modifiedNote, volume / SnowflakeManager._volumeMod, pan).note;
 			}
+			
 			
 			inStaccato(sound);
 			
-			Note.lastAbsolute = i[id];			
+			Note.lastAbsolute = Intervals.loadout.get(id);			
 			
 			// Index Counting 
 			if (Playback.reverse == false)
@@ -199,9 +200,9 @@ class Snowflake extends FlxSprite
 	private function manageSequence():Void
 	{			
 		// Push reference to interval to sequence array (strings)
-		for (interval in i)
+		for (interval in Intervals.loadout.keys())
 		{
-			if (Note.lastRecorded == i[interval])
+			if (Note.lastRecorded == Intervals.loadout.get(interval))
 			{
 				Playback.sequence.push(interval);
 				
@@ -217,15 +218,15 @@ class Snowflake extends FlxSprite
 	/** Play a note! Takes in an array of classes, and will pick one randomly. */	
 	private function _play(options: Array<String>):Void
 	{				
-		var randomNote: Class = noteAdjustments(options);
-		var sound: FlxSound;
+		var randomNote:String = noteAdjustments(options);
+		var sound:FlxSound;
 		
-		if (timbre == "Primary")
-			sound = FlxG.play(randomNote, volume, pan);
+		if (SnowflakeManager.timbre == "Primary")
+			sound =PlayState.playSound(randomNote, volume, pan).note;
 		else
 		{
-			var modifiedNote: Class = getDefinitionByName("_" + getQualifiedClassName(randomNote) ) ;
-			sound = FlxG.play(modifiedNote, volume/_volumeMod, pan);
+			var modifiedNote:FlxSoundAsset = "_" + randomNote;
+			sound = PlayState.playSound( modifiedNote, volume/SnowflakeManager._volumeMod, pan).note;
 		}
 		
 		inStaccato(sound);
@@ -240,67 +241,69 @@ class Snowflake extends FlxSprite
 			
 	private function playChord():Void
 	{					
-		i = Intervals.loadout;
 		
 		// DETERMINE CHORD TONES
-		var chordTones:Array =  FlxG.random.getObject(FlxG.random.getObject(Mode.current.chords));
+		var chordTones:Array<String> =  FlxG.random.getObject(Mode.current.chords);
 	
 		// PUSH NOTES TO FLAM TIMER
 		calculatePan();				
 		
-		var s1:FlxSound;
-		var s2:FlxSound;
-		var s3:FlxSound;
+		var s1:PlayState.SoundDef;
+		var s2:PlayState.SoundDef;
+		var s3:PlayState.SoundDef;
 		
-		if (timbre == "Primary")
+		if (SnowflakeManager.timbre == "Primary")
 		{
-			s1 = FlxG.loadSound(i[chordTones[0]], Chord.VOLUME, 0);
-			s2 = FlxG.loadSound(i[chordTones[1]], Chord.VOLUME, -1);
-			s3 = FlxG.loadSound(i[chordTones[2]], Chord.VOLUME, 1);
+			s1 = PlayState.loadSound(Intervals.loadout.get(chordTones[0]), Chord.VOLUME, 0);
+			s2 = PlayState.loadSound(Intervals.loadout.get(chordTones[1]), Chord.VOLUME, -1);
+			s3 = PlayState.loadSound(Intervals.loadout.get(chordTones[2]), Chord.VOLUME, 1);
+			
 		}
 		else
 		{
-			var _s1: Class = getDefinitionByName("_" + getQualifiedClassName(i[chordTones[0]]));
-			var _s2: Class = getDefinitionByName("_" + getQualifiedClassName(i[chordTones[1]]));
-			var _s3: Class = getDefinitionByName("_" + getQualifiedClassName(i[chordTones[2]]));
-			var _vol: Number = Chord.VOLUME/_volumeMod;
+			var _s1: String = "_" + Intervals.loadout.get(chordTones[0]);
+			var _s2: String = "_" + Intervals.loadout.get(chordTones[1]);
+			var _s3: String = "_" + Intervals.loadout.get(chordTones[2]);
+			var _vol: Float = Chord.VOLUME/SnowflakeManager._volumeMod;
 			
-			s1 = FlxG.loadSound(_s1, _vol, 0);
-			s2 = FlxG.loadSound(_s2, _vol, -1);
-			s3 = FlxG.loadSound(_s3, _vol, 1);
+			s1 = PlayState.loadSound(_s1, _vol, 0);
+			s2 = PlayState.loadSound(_s2, _vol, -1);
+			s3 = PlayState.loadSound(_s3, _vol, 1);
+			
 		}
 		
 		if (type == "Vamp")
 		{
-			s1.play();
-			MIDI.log(i[chordTones[0]], Chord.VOLUME);
+			s1.note.play();
+			MIDI.log(Intervals.loadout.get(chordTones[0]), Chord.VOLUME);
 		}
 		else
-			Game.flamNotes.push(s1);
-		
-		Game.flamNotes.push(s2, s3);
+			PlayState.flamNotes.push({name: s1.name, note: s1.note});
+			
+		PlayState.flamNotes.push({name: s2.name, note: s2.note});
+		PlayState.flamNotes.push({name: s3.name, note: s3.note});
 		
 		// Create array of classes for HUD logging.
-		var events: Array = [ i[chordTones[0]], i[chordTones[1]], i[chordTones[2]] ];
+		var events: Array<String> = [ Intervals.loadout.get(chordTones[0]), Intervals.loadout.get(chordTones[1]), Intervals.loadout.get(chordTones[2]) ];
 		
 		// If the chord is a seventh chord, push the 4th chord tone.
-		if (i[chordTones[3]] != null)
+		if (Intervals.loadout.get(chordTones[3]) != null)
 		{
-			var s4:FlxSound;
+			var s4:PlayState.SoundDef;
 			
-			if (timbre == "Primary")
-				s4 = FlxG.loadSound(i[chordTones[3]], Chord.VOLUME, -1*pan);
+			if (SnowflakeManager.timbre == "Primary")
+				s4 = PlayState.loadSound(Intervals.loadout.get(chordTones[3]), Chord.VOLUME, -1 * pan);
 			else
 			{
-				var _s4: Class = getDefinitionByName("_" + getQualifiedClassName(i[chordTones[3]]) );
-				s4 = FlxG.loadSound(_s4, Chord.VOLUME/_volumeMod, -1*pan);
+				var _s4: String = "_" + Intervals.loadout.get(chordTones[3]);
+				s4 = PlayState.loadSound(_s4, Chord.VOLUME / SnowflakeManager._volumeMod, -1 * pan);				
 			}
-				
-			Game.flamNotes.push(s4);	
-			events[3] = i[chordTones[3]];
+			PlayState.flamNotes.push({name: s4.name, note: s4.note});
+			
+			events[3] = Intervals.loadout.get(chordTones[3]);
 		}
 		
-		Game.flamTimer.start();
+		PlayState.flamTimer = PlayState.flamRate / 1000;
 		
 		HUD.logMode();			
 		HUD.logEvent(events);
@@ -308,7 +311,7 @@ class Snowflake extends FlxSprite
 	
 	private function playPedalTone():Void
 	{	
-		var pedalTone:Class = Note.lastAbsolute;
+		var pedalTone:String = Note.lastAbsolute;
 		var sound:FlxSound;
 		
 		while (pedalTone == Note.lastAbsolute 
@@ -316,16 +319,17 @@ class Snowflake extends FlxSprite
 			||(pedalTone == Note.lastOctave && type == "Octave")
 			||(pedalTone == Note.lastHarmony && type == "Harmony"))
 		{
-			pedalTone = FlxG.random.getObject(i.one1, i.fiv1, i.one2, i.fiv2);
+			pedalTone = FlxG.random.getObject([Intervals.loadout.get("one1"), Intervals.loadout.get("fiv1"), Intervals.loadout.get("one2"), Intervals.loadout.get("fiv2")]);
 		}
 		
-		if (timbre == "Primary")
-			sound = FlxG.play(pedalTone, volume/2, 0);
+		if (SnowflakeManager.timbre == "Primary")
+			sound = PlayState.playSound(pedalTone, volume/2, 0).note;
 		else
 		{
-			var modifiedNote: Class = getDefinitionByName("_" + getQualifiedClassName(pedalTone));
-			sound = FlxG.play(modifiedNote, volume/(2 + _volumeMod), 0);
+			var modifiedNote: String = "_" + pedalTone;
+			sound = PlayState.playSound(modifiedNote, volume/(2 + SnowflakeManager._volumeMod), 0).note;
 		}
+		
 		
 		inStaccato(sound);
 		
@@ -340,8 +344,8 @@ class Snowflake extends FlxSprite
 	/** Uses the option sets of the current mode to choose which note to generate. */
 	private function generateNote():Void
 	{
-		var played:Bool;
-		var optionSets: Array;
+		var played:Bool = false;
+		var optionSets: Array<Array<String>>;
 		
 		if (Scale.isPentatonic == false)
 			optionSets = Mode.current.logic;
@@ -354,9 +358,9 @@ class Snowflake extends FlxSprite
 				optionSets = Scale.MAJOR_PENTATONIC.logic;
 		}
 			
-		for (j in 0...Intervals.DATABASE.length - 1)
+		for (j in 0...Intervals.DATABASE.length)
 		{				
-			if (Note.lastRecorded == i[Intervals.DATABASE[j]])
+			if (Note.lastRecorded == Intervals.loadout.get(Intervals.DATABASE[j]))
 			{					
 				_play(optionSets[j]);
 				played = true;
@@ -365,7 +369,7 @@ class Snowflake extends FlxSprite
 			}
 		}
 		
-		if (played == false)
+		if (!played)
 			_play(optionSets[22]);	// [22] is the else statement.
 	}
 	
@@ -401,47 +405,47 @@ class Snowflake extends FlxSprite
 		
 		// NOTE PREVENTIONS
 		random = FlxG.random.int(0, options.length - 1);
-		note = i[options[random]] ;
+		note = Intervals.loadout.get(options[random]);
 		
 		// Halve Probability of Trills and Repeats
 		if (note == Note.secondToLastRecorded || note == Note.lastAbsolute)
 		{
 			random = FlxG.random.int(0, options.length - 1);
-			note = i[options[random]] ;
+			note = Intervals.loadout.get(options[random]);
 		}
 		
 		var g:Int = 0;		
 		while (g < 100 && (note == null
 			|| (note == Note.lastHarmony && lastLickedType == "Harmony")
 			|| (note == Note.lastOctave && lastLickedType == "Octave")
-			|| (type == "Octave" && (note == i.for1 || note == i.for2 || note == i.for3)) ))
+			|| (type == "Octave" && (note == Intervals.loadout.get("for1") || note == Intervals.loadout.get("for2") || note == Intervals.loadout.get("for3"))) ))
 		{
 			random = FlxG.random.int(0, options.length - 1);
-			note = i[options[random]] ;
+			note = Intervals.loadout.get(options[random]);
 			g++;
 		}				
 		
 		// Prevent certain tensions from triggering on record mode key changes
 		if (Key.justChanged
 			&& Mode.current != Mode.MIXOLYDIAN
-			&& (note == i.two1 ||
-				note == i.for1 ||
-				note == i.six1 ||
-				note == i.for2 ||
-				note == i.six2 ||
-				note == i.for3 ||
-				note == i.six3) )
+			&& (note == Intervals.loadout.get("two1") ||
+				note == Intervals.loadout.get("for1") ||
+				note == Intervals.loadout.get("six1") ||
+				note == Intervals.loadout.get("for2") ||
+				note == Intervals.loadout.get("six2") ||
+				note == Intervals.loadout.get("for3") ||
+				note == Intervals.loadout.get("six3")) )
 		{	
-			for (desc in i)
+			for (desc in Intervals.loadout.keys())
 			{				
-				if (note == i[desc])
+				if (note == Intervals.loadout.get(desc))
 				{
-					for (j in 0...Intervals.DATABASE.length - 1)
+					for (j in 0...Intervals.DATABASE.length)
 					{
-						if (i[desc] == Intervals.DATABASE[j])
+						if (Intervals.loadout.get(desc) == Intervals.DATABASE[j])
 						{
 							// change new note to be +/- 1 interval if the key just changed.
-							note = i[Intervals.DATABASE[j + FlxMath.randomSign()]];	
+							note = Intervals.loadout.get(Intervals.DATABASE[j + FlxG.random.sign()]);	
 							break;
 						}
 					}

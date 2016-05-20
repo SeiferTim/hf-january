@@ -45,9 +45,9 @@ class Text extends FlxText
 			if (Playback.reverse == false)
 			{
 				if (Playback.index != 0)
-					_text = Playback.index.toString();
+					_text = Std.string(Playback.index);
 				else
-					_text = Playback.sequence.length.toString();
+					_text = Std.string(Playback.sequence.length);
 			}
 			else
 			{											

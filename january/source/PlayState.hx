@@ -5,6 +5,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup;
+import flixel.system.FlxAssets.FlxSoundAsset;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tile.FlxTilemap;
@@ -21,6 +22,12 @@ import music.Playback;
 import music.Scale;
 import openfl.Assets;
 import openfl.utils.Object;
+
+
+typedef SoundDef = {
+	name:String,
+	note:FlxSound
+}
 
 class PlayState extends FlxState
 {
@@ -46,7 +53,7 @@ class PlayState extends FlxState
 	private static var sky:FlxSprite;		// sprite of the sky
 	private static var mountain:FlxSprite;	// sprite of the distant mountain
 	public static var player:Player;		// the player sprite
-	public static var snow:FlxGroup;		// all of the snowflakes
+	public static var snow:FlxTypedGroup<Snowflake>;		// all of the snowflakes
 	
 	/* TEXT RELATED */
 	public static var feedback:Text;		// the feedback text for secret features
@@ -57,15 +64,16 @@ class PlayState extends FlxState
 	private static inline var FLURRY:Int = 1000;	// the slowest spawn rate
 	public static var spawnRate:Int = SHOWER;		// the amount of time between snowflake spawns
 	private static inline var SPAWNRATE_DECREMENTER:Int = 5;	// rate at which the time between snowflake spawns is decremented by
-	private static var spawnTimer:FlxTimer;			// the timer for determining when to spawn snowflakes
+	private static var spawnTimer:Float;			// the timer for determining when to spawn snowflakes
 	
-	public static var flamTimer:FlxTimer;			// the timer used to create separation between notes
-	public static var flamNotes:Array<Dynamic> = [];			// the notes to be flammed at any given time
-	private static var flamRate:Int = 25;			// the time between flammed notes
+	public static var flamTimer:Float;			// the timer used to create separation between notes
+	public static var flamNotes:Array<SoundDef> = [];			// the notes to be flammed at any given time
+	public static var flamRate:Int = 25;			// the time between flammed notes
 	private static var flamCounter:Int = 0;			// used to count through the notes in a chord/etc to be flammed
+	public static var sounds:Array<SoundDef> = [];
 	
 	public static var onAutoPilot:Bool = false;		// whether or not game is on autopilot or not
-	public static var autoPilotMOvement:String = "Right";
+	public static var autoPilotMovement:String = "Right";
 	public static var inImprovMode:Bool = false;	// whether or not game is in improv mode
 	
 	/** Initialize game, create and add everything. */
@@ -74,11 +82,11 @@ class PlayState extends FlxState
 		Reg.score = SCORE_INIT;
 		FlxG.sound.volume = 1;
 		#if flash
-		FlxG.sound.playMusic(AssetPaths.ambience__mp3, 1 / 5);
+		FlxG.sound.playMusic(AssetPaths.ambience__mp3, 1/5);
 		#else
-		FlxG.sound.playMusic(AssetPaths.ambience__ogg, 1 / 5);
+		FlxG.sound.playMusic(AssetPaths.ambience__ogg, 1/5);
 		#end
-		FlxG.sound.music.fadeIn(2);
+		FlxG.sound.music.fadeIn(2,0,1/5);
 		
 		// Set Channel 1 Instrument to Guitar
 		MIDI.trackEvents.push(0);
@@ -125,7 +133,7 @@ class PlayState extends FlxState
 		add(player);
 		
 		// Create Snow
-		snow = new FlxGroup(); 
+		snow = new FlxTypedGroup<Snowflake>(1000); 
 		add(snow);
 		
 		// Add HUD
@@ -137,11 +145,9 @@ class PlayState extends FlxState
 		add(HUD.midiButton);
 		
 		// Start Timers
-		spawnTimer = new FlxTimer();
-		spawnTimer.start(0);
+		spawnTimer = 0;
 		
-		flamTimer = new FlxTimer();
-		flamTimer.start(flamRate);
+		flamTimer = flamRate/1000;
 		
 		// Set Initial Mode to Ionian or Aeolian.
 		Mode.index = FlxG.random.getObject([0, 4]);
@@ -151,52 +157,91 @@ class PlayState extends FlxState
 		super.create();
 	}
 	
+	static public function playSound(Sound:String, Volume:Float, Pan:Float):SoundDef
+	{
+		trace(Sound, getFilename(Sound));
+		
+		var note:FlxSound = FlxG.sound.play(Assets.getSound(getFilename(Sound)), Volume, false);
+		note.pan = Pan;
+		var s:SoundDef = {name: Sound, note: note };
+		sounds.push({name: Sound, note: note });
+		return s;
+	}
+	
+	static public function getFilename(Sound:String):String
+	{
+		
+		var filename:String = "notes/" + StringTools.replace(Sound, "s", "#");
+		filename = StringTools.replace(filename, "_", "");
+		#if flash
+		filename+= ".mp3";
+		#else
+		filename+= ".ogg";
+		#end
+		return filename;
+	}
+	
+	static public function loadSound(Sound:String, Volume:Float, Pan:Float):SoundDef
+	{
+		trace(Sound, getFilename(Sound));
+		if (StringTools.endsWith(Sound, "null"))
+			return null;
+		var note:FlxSound = FlxG.sound.load(Assets.getSound(getFilename(Sound)), Volume, false);
+		note.pan = Pan;
+		var s:SoundDef = {name: Sound, note: note };
+		sounds.push({name: Sound, note: note });
+		return s;
+	}
+	
 	/** Called every frame. */
 	override public function update(elapsed:Float):Void
 	{
 		// Timer callback, used to flam out notes in chords, etc. Awesome!
-		flamTimer.onComplete = function(_) { 
-		
+		flamTimer -= elapsed;
+		if (flamTimer <= 0 && flamTimer > -100)
+		{
 			if (flamNotes[0] != null && flamCounter <= flamNotes.length - 1)
 			{
-				var note:FlxSound = flamNotes[flamCounter];
-				note.play();
+				var flamNote:SoundDef = flamNotes[flamCounter];
 				
-				var classToLog:Class<Note>;
+				flamNote.note.play();
+				
+				var classToLog:String;
 				var volToLog:Float;
 				
 				// Always pass the primary timbre to the MIDI logging system.
-				if (getQualifiedClassName(note.classType).substr(0,1) == "_")
+				if (flamNote.name.substr(0,1) == "_")
 				{
-					classToLog = getDefinitionByName(getQualifiedClassName(note.classType).substr(1));
-					volToLog = note.volume * Snowflake._volumeMod;
+					classToLog = flamNote.name.substr(1);
+					volToLog = flamNote.note.volume * SnowflakeManager._volumeMod;
 				}
 				else
 				{
-					classToLog = note.classType;
-					volToLog = note.volume;
+					classToLog = flamNote.name;
+					volToLog = flamNote.note.volume;
 				}
 					
 				MIDI.log(classToLog, volToLog);
 				flamCounter++;
-				flamTimer.reset(flamRate);
+				flamTimer = flamRate / 1000;
 			}
 			else
 			{
 				flamRate = FlxG.random.int(25, 75);		// Fluctuate the arpeggio rate.
 				flamCounter = 0;
 				flamNotes = [];
-				flamTimer.abort();
+				flamTimer = -100;
 			}
 		}
 		
-		// Spawn snowflakes when timer expires.
-		spawnTimer.onComplete = function(_) {
+		spawnTimer -= elapsed;
+		if (spawnTimer <= 0)
+		{
 			if (spawnRate <= BLIZZARD)
 				spawnRate = BLIZZARD;
 				
-			spawnTimer.reset(spawnRate);			
-			Snowflake.manage();
+			spawnTimer = spawnRate / 1000;
+			SnowflakeManager.manage();
 			
 			if (onAutoPilot)
 			{
@@ -225,26 +270,26 @@ class PlayState extends FlxState
 		if (player.tongueUp) FlxG.overlap(snow, player, onLick);
 		
 		// Key input checks for advanced features!.
-		if (FlxG.keys.justPressed("PLUS"))		moreSnow();
-		if (FlxG.keys.justPressed("MINUS"))		lessSnow();
+		if (FlxG.keys.justPressed.PLUS)		moreSnow();
+		if (FlxG.keys.justPressed.MINUS)		lessSnow();
 		
-		if (FlxG.keys.justPressed("K"))			Key.cycle();
-		if (FlxG.keys.justPressed("COMMA"))		Mode.cycle("Left");
-		if (FlxG.keys.justPressed("PERIOD"))	Mode.cycle("Right");
-		if (FlxG.keys.justPressed("SLASH")) 	Scale.toPentatonic();
-		if (FlxG.keys.justPressed("P")) 		Pedal.toggle();
+		if (FlxG.keys.justPressed.K)			Key.cycle();
+		if (FlxG.keys.justPressed.COMMA)		Mode.cycle("Left");
+		if (FlxG.keys.justPressed.PERIOD)	Mode.cycle("Right");
+		if (FlxG.keys.justPressed.SLASH) 	Scale.toPentatonic();
+		if (FlxG.keys.justPressed.P) 		Pedal.toggle();
 		
-		if (FlxG.keys.justPressed("LBRACKET"))	Playback.cycle("Left");
-		if (FlxG.keys.justPressed("RBRACKET"))	Playback.cycle("Right");
-		if (FlxG.keys.justPressed("ENTER")) 	Playback.polarity();
-		if (FlxG.keys.justPressed("BACKSLASH"))	Playback.resetRestart();
+		if (FlxG.keys.justPressed.LBRACKET)	Playback.cycle("Left");
+		if (FlxG.keys.justPressed.RBRACKET)	Playback.cycle("Right");
+		if (FlxG.keys.justPressed.ENTER) 	Playback.polarity();
+		if (FlxG.keys.justPressed.BACKSLASH)	Playback.resetRestart();
 		
-		if (FlxG.keys.justPressed("SHIFT"))		Playback.staccato();
-		if (FlxG.keys.justPressed("I"))			improvise();
-		if (FlxG.keys.justPressed("ZERO"))		autoPilot();
+		if (FlxG.keys.justPressed.SHIFT)		Playback.staccato();
+		if (FlxG.keys.justPressed.I)			improvise();
+		if (FlxG.keys.justPressed.ZERO)		autoPilot();
 		
-		if (FlxG.keys.justPressed("H"))			HUD.toggle();
-		if (FlxG.keys.justPressed("M"))			HUD.midi();
+		if (FlxG.keys.justPressed.H)			HUD.toggle();
+		if (FlxG.keys.justPressed.M)			HUD.midi();
 		
 		// Keep MIDI Timer in check, to get appropriate time values for logging.
 		if (Note.lastAbsolute != null)
@@ -263,7 +308,7 @@ class PlayState extends FlxState
 	 * @param PlayerRef		The Player sprite.
 	 * 
 	 */
-	public function onLick(SnowRef: Snowflake, PlayerRef: Player):Void
+	public function onLick(SnowRef:Snowflake, PlayerRef: Player):Void
 	{									
 		SnowRef.onLick();
 		

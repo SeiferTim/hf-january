@@ -105,7 +105,7 @@ class HUD
 	 */		
 	public static function logMode():Void
 	{
-		var keyLetter:String = enharmonic(Intervals.loadout.one1);
+		var keyLetter:String = enharmonic(Intervals.loadout.get("one1"));
 		
 		if (Scale.isPentatonic)
 		{
@@ -130,7 +130,7 @@ class HUD
 		if (chordTones != null)
 		{
 			var chordName:String = "";
-			for (i in 0...chordTones.length - 1)
+			for (i in 0...chordTones.length)
 			{
 				var actualName: String = enharmonic(chordTones[i]);
 				chordName += actualName + " ";
@@ -149,7 +149,7 @@ class HUD
 			{
 				text = findSharp.replace(text, "");
 				
-				for (i in 0...Key.LETTERS.length - 1)
+				for (i in 0...Key.LETTERS.length)
 				{
 					if (text == Key.LETTERS[i])
 					{

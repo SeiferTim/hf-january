@@ -64,9 +64,9 @@ class PlayState extends FlxState
 	private static inline var FLURRY:Int = 1000;	// the slowest spawn rate
 	public static var spawnRate:Int = SHOWER;		// the amount of time between snowflake spawns
 	private static inline var SPAWNRATE_DECREMENTER:Int = 5;	// rate at which the time between snowflake spawns is decremented by
-	private static var spawnTimer:Float;			// the timer for determining when to spawn snowflakes
+	private static var spawnTimer:Float = 0;			// the timer for determining when to spawn snowflakes
 	
-	public static var flamTimer:Float;			// the timer used to create separation between notes
+	public static var flamTimer:Float = 0;			// the timer used to create separation between notes
 	public static var flamNotes:Array<SoundDef> = [];			// the notes to be flammed at any given time
 	public static var flamRate:Int = 25;			// the time between flammed notes
 	private static var flamCounter:Int = 0;			// used to count through the notes in a chord/etc to be flammed
@@ -159,8 +159,6 @@ class PlayState extends FlxState
 	
 	static public function playSound(Sound:String, Volume:Float, Pan:Float):SoundDef
 	{
-		trace(Sound, getFilename(Sound));
-		
 		var note:FlxSound = FlxG.sound.play(Assets.getSound(getFilename(Sound)), Volume, false);
 		note.pan = Pan;
 		var s:SoundDef = {name: Sound, note: note };
@@ -170,9 +168,7 @@ class PlayState extends FlxState
 	
 	static public function getFilename(Sound:String):String
 	{
-		
-		var filename:String = "notes/" + StringTools.replace(Sound, "s", "#");
-		filename = StringTools.replace(filename, "_", "");
+		var filename:String = "notes/" + StringTools.replace(Sound, "_", "U");
 		#if flash
 		filename+= ".mp3";
 		#else
@@ -183,7 +179,6 @@ class PlayState extends FlxState
 	
 	static public function loadSound(Sound:String, Volume:Float, Pan:Float):SoundDef
 	{
-		trace(Sound, getFilename(Sound));
 		if (StringTools.endsWith(Sound, "null"))
 			return null;
 		var note:FlxSound = FlxG.sound.load(Assets.getSound(getFilename(Sound)), Volume, false);
@@ -206,8 +201,8 @@ class PlayState extends FlxState
 				
 				flamNote.note.play();
 				
-				var classToLog:String;
-				var volToLog:Float;
+				var classToLog:String = "";
+				var volToLog:Float = 0;
 				
 				// Always pass the primary timbre to the MIDI logging system.
 				if (flamNote.name.substr(0,1) == "_")

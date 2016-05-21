@@ -13,7 +13,7 @@ class SnowflakeManager
 	/** Used to store Intervals.loadout */
 	static var i:Map<String, String>;
 	/** Whether to use primary or secondary timbre set. */
-	static public var timbre:String;
+	static public var timbre:String= "";
 	/** Volume Modifier for Secondary Timbre, used to divide original volume. */
 	static public var _volumeMod:Float = 1.5;
 	

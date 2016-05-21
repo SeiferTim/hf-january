@@ -27,11 +27,11 @@ class Snowflake extends FlxSprite
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 
 	/** Volume for the Note. */
-	var volume:Float;	
+	var volume:Float = 0;	
 	/** Pan Value for the Note, measured in -1 to 1. */
 	var pan:Float = FlxG.random.float(-1, 1);
 	/** Whether the Snowflake in question allows for a pedal tone. */
-	var pedalAllowed:Bool;
+	var pedalAllowed:Bool = false;
 	
 	
 	// List of Secondary Timbre Classes
@@ -44,7 +44,7 @@ class Snowflake extends FlxSprite
 	/** The type of snowflake in question. */
 	public var type:String = "";
 	/** Type of the last licked snowflake. */
-	private static var lastLickedType:String;
+	private static var lastLickedType:String = "";
 	/** Horizontal modifier for snowflake movement. */
 	var windX:Float = 0;
 	/** Vertical modifier for snowflake movement. */
@@ -400,8 +400,8 @@ class Snowflake extends FlxSprite
 	
 	private function noteAdjustments(options: Array<String>):String
 	{
-		var note: String;
-		var random:Int;
+		var note: String = "";
+		var random:Int = 0;
 		
 		// NOTE PREVENTIONS
 		random = FlxG.random.int(0, options.length - 1);

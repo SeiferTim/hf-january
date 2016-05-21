@@ -10,7 +10,7 @@
 
 	<!--Minimum without FLX_NO_GAMEPAD: 11.8, without FLX_NO_NATIVE_CURSOR: 11.2 -->
 	<set name="SWF_VERSION" value="11.8" />
-
+	<set name="next" />
 	<!--------------------------------WINDOW SETTINGS------------------------------->
 
 	<!--These window settings apply to all targets-->
@@ -18,7 +18,7 @@
 
 	<!--Web-specific-->
 	<window if="web" orientation="portrait"  />
-
+	
 	<!--Desktop-specific-->
 	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" />
 
@@ -30,12 +30,16 @@
 	<set name="BUILD_DIR" value="export" />
 	<classpath name="source" />
 	<assets path="assets/images" include="*.png|*.jpg" type="image" embed="true" />
+		
 	<assets path="assets/music" include="*.ogg" unless="flash" type="music" embed="true" />
 	<assets path="assets/music" include="*.mp3" if="flash" type="music" embed="true" />
+	<!--	
 	<assets path="assets/sounds" include="*.mp3" if="flash" type="sound" embed="true" />
-	<assets path="assets/sounds" include="*.wav" unless="flash" type="sound" embed="true" />
-	<assets path="assets/sounds/notes" include="*.mp3" rename="notes" if="flash" type="sound" embed="true" />
-	<assets path="assets/sounds/notes" include="*.wav" rename="notes" unless="flash" type="sound" embed="true" />
+	<assets path="assets/sounds" include="*.ogg" unless="flash" type="sound" embed="true" />-->
+		
+	<assets path="assets/notes" include="*.mp3" rename="notes" if="flash" type="sound" embed="true" />
+	<assets path="assets/notes" include="*.wav" rename="notes" unless="flash" type="sound" embed="true" />
+		
 	<assets path="assets/data" rename="data" include="*.txt" type="text" embed="true" />
 	<assets path="assets/fonts" include="*.ttf" embed="true" />
 	
@@ -44,6 +48,7 @@
 
 	<haxelib name="flixel"/>
 		
+	
 	
 
 	<!--In case you want to use the addons package-->
@@ -86,6 +91,8 @@
 
 	<!--Enable this for Nape release builds for a serious peformance improvement-->
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
+		
+	<haxedef name="next" />
 
 	<!--------------------------------CUSTOM---------------------------------------->
 

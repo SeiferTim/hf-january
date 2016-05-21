@@ -11,7 +11,7 @@ class Text extends FlxText
 	// [Embed(source="../assets/frucade.ttf", fontFamily="frucade", embedAsCFF="false")] public static var font:String;
 
 	/** The number of seconds to hold the text before it starts to fade. */
-	private static var lifespan: Float;
+	private static var lifespan: Float = 0;
 	
 	/** The gutter size, used to keep text off screen edges. */
 	public static inline var GUTTER: Int = 5;

@@ -31,14 +31,14 @@
 	<classpath name="source" />
 	<assets path="assets/images" include="*.png|*.jpg" type="image" embed="true" />
 		
-	<assets path="assets/music" include="*.ogg" unless="flash" type="music" embed="true" />
-	<assets path="assets/music" include="*.mp3" if="flash" type="music" embed="true" />
+	<assets path="assets/music" include="*.ogg" unless="flash" type="music" embed="false" />
+	<assets path="assets/music" include="*.mp3" if="flash" type="music" embed="false" />
 	<!--	
 	<assets path="assets/sounds" include="*.mp3" if="flash" type="sound" embed="true" />
 	<assets path="assets/sounds" include="*.ogg" unless="flash" type="sound" embed="true" />-->
 		
-	<assets path="assets/notes" include="*.mp3" rename="notes" if="flash" type="sound" embed="true" />
-	<assets path="assets/notes" include="*.wav" rename="notes" unless="flash" type="sound" embed="true" />
+	<assets path="assets/notes" include="*.mp3" rename="notes" if="flash" type="sound" embed="false" />
+	<assets path="assets/notes" include="*.ogg" rename="notes" unless="flash" type="sound" embed="false" />
 		
 	<assets path="assets/data" rename="data" include="*.txt" type="text" embed="true" />
 	<assets path="assets/fonts" include="*.ttf" embed="true" />

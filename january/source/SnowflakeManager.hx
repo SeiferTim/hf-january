@@ -26,7 +26,10 @@ class SnowflakeManager
 	{													
 		var flakeID:Class<Snowflake> = flakes[FlxG.random.weightedPick(weights)];
 		var flake:Snowflake = PlayState.snow.recycle(flakeID, null, true, true);
-		flake.spawn(Type.getClassName(flakeID));
+		var typeName:String = Type.getClassName(flakeID);
+		typeName = StringTools.replace(typeName, "snowflakes.", "");
+		
+		flake.spawn(typeName);
 	}
 	
 	

@@ -118,7 +118,9 @@ class Snowflake extends FlxSprite
 		
 		// Count How Many of Each Flake Type is Licked, For Custom MIDI File Name
 		if (type != "Small")
+		{
 			PlayState.scores.set(type, PlayState.scores.get(type) + 1);
+		}
 		
 		lastLickedType = type;
 	}
@@ -131,7 +133,7 @@ class Snowflake extends FlxSprite
 	private function playNote():Void
 	{									
 		
-		if (Playback.mode == "Repeat")									
+		if (Playback.mode == "Repeat")
 			playSequence();
 		else
 			generateNote();

@@ -144,6 +144,9 @@ class PlayState extends FlxState
 		
 		add(HUD.midiButton);
 		
+		add(HUD.promptBack);
+		add(HUD.promptText);
+		
 		// Start Timers
 		spawnTimer = 0;
 		
@@ -261,30 +264,45 @@ class PlayState extends FlxState
 		// Loop Sky Background
 		if (sky.x < -716) sky.x = 0;
 		
-		// Collision Check
-		if (player.tongueUp) FlxG.overlap(snow, player, onLick);
-		
-		// Key input checks for advanced features!.
-		if (FlxG.keys.justPressed.PLUS)		moreSnow();
-		if (FlxG.keys.justPressed.MINUS)		lessSnow();
-		
-		if (FlxG.keys.justPressed.K)			Key.cycle();
-		if (FlxG.keys.justPressed.COMMA)		Mode.cycle("Left");
-		if (FlxG.keys.justPressed.PERIOD)	Mode.cycle("Right");
-		if (FlxG.keys.justPressed.SLASH) 	Scale.toPentatonic();
-		if (FlxG.keys.justPressed.P) 		Pedal.toggle();
-		
-		if (FlxG.keys.justPressed.LBRACKET)	Playback.cycle("Left");
-		if (FlxG.keys.justPressed.RBRACKET)	Playback.cycle("Right");
-		if (FlxG.keys.justPressed.ENTER) 	Playback.polarity();
-		if (FlxG.keys.justPressed.BACKSLASH)	Playback.resetRestart();
-		
-		if (FlxG.keys.justPressed.SHIFT)		Playback.staccato();
-		if (FlxG.keys.justPressed.I)			improvise();
-		if (FlxG.keys.justPressed.ZERO)		autoPilot();
-		
-		if (FlxG.keys.justPressed.H)			HUD.toggle();
-		if (FlxG.keys.justPressed.M)			HUD.midi();
+		if (HUD.promptText.exists)
+		{
+			#if !flash
+			if (FlxG.keys.justPressed.Y)		Sys.exit(0);
+			else if (FlxG.keys.justPressed.N)	HUD.hideExit();
+			#end
+		}
+		else
+		{
+			// Collision Check
+			if (player.tongueUp) FlxG.overlap(snow, player, onLick);
+			
+			// Key input checks for advanced features!.
+			if (FlxG.keys.justPressed.PLUS)			moreSnow();
+			if (FlxG.keys.justPressed.MINUS)		lessSnow();
+			
+			if (FlxG.keys.justPressed.K)			Key.cycle();
+			if (FlxG.keys.justPressed.COMMA)		Mode.cycle("Left");
+			if (FlxG.keys.justPressed.PERIOD)		Mode.cycle("Right");
+			if (FlxG.keys.justPressed.SLASH) 		Scale.toPentatonic();
+			if (FlxG.keys.justPressed.P) 			Pedal.toggle();
+			
+			if (FlxG.keys.justPressed.LBRACKET)		Playback.cycle("Left");
+			if (FlxG.keys.justPressed.RBRACKET)		Playback.cycle("Right");
+			if (FlxG.keys.justPressed.ENTER) 		Playback.polarity();
+			if (FlxG.keys.justPressed.BACKSLASH)	Playback.resetRestart();
+			
+			if (FlxG.keys.justPressed.SHIFT)		Playback.staccato();
+			if (FlxG.keys.justPressed.I)			improvise();
+			if (FlxG.keys.justPressed.ZERO)			autoPilot();
+			
+			if (FlxG.keys.justPressed.H)			HUD.toggle();
+			if (FlxG.keys.justPressed.M)			HUD.midi();
+			
+			#if !flash
+			if (FlxG.keys.justPressed.F)			FlxG.fullscreen = !FlxG.fullscreen;
+			if (FlxG.keys.justPressed.ESCAPE)		HUD.promptExit();
+			#end
+		}
 		
 		// Keep MIDI Timer in check, to get appropriate time values for logging.
 		if (Note.lastAbsolute != null)

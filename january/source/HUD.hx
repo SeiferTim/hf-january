@@ -1,6 +1,9 @@
 package;
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.text.FlxText;
+import flixel.util.FlxColor;
+import flixel.util.FlxSpriteUtil;
 import music.Intervals;
 import music.Key;
 import music.MIDI;
@@ -31,6 +34,10 @@ class HUD
 	/** Regular Expression used to find "s" for sharp. */
 	private static var findSharp:EReg = ~/\s*[s]/g;
 	
+	// quit prompt stuff
+	public static var promptBack:FlxSprite;
+	public static var promptText:FlxText;
+	
 	/** Sets up HUD! does everything but add it to the state. */
 	public static function init():Void
 	{				
@@ -43,6 +50,22 @@ class HUD
 		row1.scrollFactor.x = row2.scrollFactor.x = row3.scrollFactor.x = 0;
 		row1.font = row2.font = row3.font = FONT;
 		row1.exists = row2.exists = row3.exists = false;			
+		
+		promptText = new FlxText(0, 0, 0, "Exit? Y / N");
+		promptText.scrollFactor.x = 0;
+		promptText.setFormat(AssetPaths.frucade__ttf,8,0xff677889);
+		promptText.screenCenter();
+		promptText.exists = false;
+		
+		promptBack = new FlxSprite();
+		promptBack.makeGraphic(Std.int(promptText.width + 10), Std.int(promptText.height + 10), 0xff677889);
+		FlxSpriteUtil.drawRect(promptBack, 1, 1, promptBack.width - 2, promptBack.height - 2, FlxColor.WHITE);
+		promptBack.screenCenter();
+		promptBack.scrollFactor.x = 0;
+		promptBack.exists = false;
+		
+		
+		
 	}
 		
 	/** Turns HUD on or off. */ 
@@ -53,7 +76,7 @@ class HUD
 	
 	public static function midi():Void
 	{
-		FlxG.stage.displayState = StageDisplayState.NORMAL;
+		//FlxG.stage.displayState = StageDisplayState.NORMAL;
 		
 		if (FlxG.mouse.visible)
 		{
@@ -169,4 +192,13 @@ class HUD
 		row1.exists = row2.exists = row3.exists = false;
 	}
 	
+	public static function promptExit():Void
+	{
+		promptBack.exists = promptText.exists = true;
+	}
+	
+	public static function hideExit():Void
+	{
+		promptBack.exists = promptText.exists = false;
+	}
 }

@@ -41,7 +41,7 @@ class Octave extends Snowflake
 		{								
 			if (Note.lastAbsolute == Note.DATABASE[i])
 			{
-				while (octaveTone == "")
+				while (octaveTone == "" || octaveTone == null)
 					octaveTone = Note.DATABASE[i + FlxG.random.getObject([12, -12])];
 				
 				break;

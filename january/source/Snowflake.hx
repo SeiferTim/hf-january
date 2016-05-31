@@ -152,9 +152,15 @@ class Snowflake extends FlxSprite
 		var sound:FlxSound;
 		if (Playback.sequence.length == 0)
 		{
-			PlayState.playSound(Note.lastAbsolute, volume, pan);
-			
-			Playback.index = 1;
+			if (Note.lastAbsolute != null)
+			{
+				PlayState.playSound(Note.lastAbsolute, volume, pan);
+				Playback.index = 1;
+			}
+			else
+			{
+				return;
+			}
 		}
 		else
 		{				

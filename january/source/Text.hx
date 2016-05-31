@@ -20,9 +20,9 @@ class Text extends FlxText
 	{
 		x = -15;
 		y = -15;
-		width = 200;
-		super(x, y, width);
 		
+		super(x, y, 0);
+		moves = true;
 		velocity.y = -8;
 		font = AssetPaths.frucade__ttf;
 		alpha = 0;

@@ -30,7 +30,7 @@ class HUD
 	/** The "Save as MIDI" button. */
 	public static var midiButton:Button;
 	/** The font used for HUD objects. */
-	public static inline var FONT:String = "frucade";
+	//public static inline var FONT:String = "frucade";
 	/** Regular Expression used to find "s" for sharp. */
 	private static var findSharp:EReg = ~/\s*[s]/g;
 	
@@ -48,7 +48,7 @@ class HUD
 		midiButton.x = FlxG.width - midiButton.width - 3;
 		midiButton.y = 3;
 		row1.scrollFactor.x = row2.scrollFactor.x = row3.scrollFactor.x = 0;
-		row1.font = row2.font = row3.font = FONT;
+		row1.font = row2.font = row3.font = AssetPaths.frucade__ttf;
 		row1.exists = row2.exists = row3.exists = false;			
 		
 		promptText = new FlxText(0, 0, 0, "Exit? Y / N");

@@ -58,9 +58,9 @@ class Player extends FlxSprite
 		else
 			maxVelocity.x = 40;
 
-		if (FlxG.keys.pressed.CONTROL)
+    if (Reg.inputPressed(Reg.ACT_SPEEDUP))
 			maxVelocity.x = 60;
-
+		
 		if (FlxG.keys.anyPressed([LEFT, A]) || (PlayState.onAutoPilot && PlayState.autoPilotMovement == "Left"))
 		{
 			facing = FlxObject.LEFT;

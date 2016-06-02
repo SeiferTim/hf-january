@@ -3,6 +3,7 @@ package;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
+import flixel.system.scaleModes.PixelPerfectScaleMode;
 import openfl.display.Sprite;
 import openfl.Lib;
 
@@ -34,6 +35,7 @@ class Main extends Sprite
 		}
 
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
+		FlxG.scaleMode = new PixelPerfectScaleMode();
 		FlxG.sound.muteKeys = null;
 		FlxG.sound.volumeDownKeys = null;
 		FlxG.sound.volumeUpKeys = null;

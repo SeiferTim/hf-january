@@ -43,6 +43,7 @@
 	<assets path="assets/data" rename="data" include="*.txt" type="text" embed="true" />
 	<assets path="assets/fonts" include="*.ttf" embed="true" />
 	
+	<assets path="assets/config" include="*.cfg" type="text" rename="config" embed="false" />
 
 	<!--------------------------------LIBRARIES------------------------------------->
 

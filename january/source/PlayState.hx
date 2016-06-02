@@ -82,11 +82,11 @@ class PlayState extends FlxState
 		Reg.score = SCORE_INIT;
 		FlxG.sound.volume = 1;
 		#if flash
-		FlxG.sound.playMusic(AssetPaths.ambience__mp3, 1/2);
+		FlxG.sound.playMusic(AssetPaths.ambience__mp3, 1.0);
 		#else
-		FlxG.sound.playMusic(AssetPaths.ambience__ogg, 1/2);
+		FlxG.sound.playMusic(AssetPaths.ambience__ogg, 1.0);
 		#end
-		FlxG.sound.music.fadeIn(2,0,1/8);
+		FlxG.sound.music.fadeIn(2,0,0.1);
 
 		// Set Channel 1 Instrument to Guitar
 		MIDI.trackEvents.push(0);

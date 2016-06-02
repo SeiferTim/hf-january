@@ -295,7 +295,8 @@ class Snowflake extends FlxSprite
 		var events: Array<String> = [ Intervals.loadout.get(chordTones[0]), Intervals.loadout.get(chordTones[1]), Intervals.loadout.get(chordTones[2]) ];
 		
 		// If the chord is a seventh chord, push the 4th chord tone.
-		if (Intervals.loadout.get(chordTones[3]) != null)
+		
+		if (chordTones.length > 3 && Intervals.loadout.get(chordTones[3]) != null)
 		{
 			var s4:PlayState.SoundDef;
 			

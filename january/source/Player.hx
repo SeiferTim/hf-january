@@ -61,19 +61,19 @@ class Player extends FlxSprite
     if (Reg.inputPressed(Reg.ACT_SPEEDUP))
 			maxVelocity.x = 60;
 		
-		if (FlxG.keys.anyPressed([LEFT, A]) || (PlayState.onAutoPilot && PlayState.autoPilotMovement == "Left"))
+		if (Reg.inputPressed(Reg.ACT_PLAYER_MOVE_L) || (PlayState.onAutoPilot && PlayState.autoPilotMovement == "Left"))
 		{
 			facing = FlxObject.LEFT;
 			SnowflakeManager.timbre = "Secondary";
 			velocity.x = -maxVelocity.x;
 		}
-		else if (FlxG.keys.anyPressed([RIGHT, D]) || (PlayState.onAutoPilot && PlayState.autoPilotMovement == "Right"))
+		else if (Reg.inputPressed(Reg.ACT_PLAYER_MOVE_R) || (PlayState.onAutoPilot && PlayState.autoPilotMovement == "Right"))
 		{
 			facing = FlxObject.RIGHT;
 			SnowflakeManager.timbre = "Primary";
 			velocity.x = maxVelocity.x;
 		}
-		else if (FlxG.keys.anyJustReleased([LEFT, RIGHT, A, D]) || (PlayState.onAutoPilot && PlayState.autoPilotMovement == "Still"))
+		else if (Reg.inputJustReleased(Reg.ACT_PLAYER_MOVE_L) || Reg.inputJustReleased(Reg.ACT_PLAYER_MOVE_R) || (PlayState.onAutoPilot && PlayState.autoPilotMovement == "Still"))
 		{
 			drag.x = 100;
 			stopped = true;
@@ -83,8 +83,8 @@ class Player extends FlxSprite
 		// ANIMATION //
 		///////////////
 
-		var up:Bool = FlxG.keys.anyPressed([UP, W]);
-		var down:Bool = FlxG.keys.anyPressed([DOWN, S]);
+		var up:Bool = Reg.inputPressed(Reg.ACT_TONGUE_OUT); 
+		var down:Bool = Reg.inputPressed(Reg.ACT_TONGUE_IN);
 
 		if (velocity.x != 0)
 		{

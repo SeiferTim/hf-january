@@ -279,26 +279,26 @@ class PlayState extends FlxState
 			
 
 			// Key input checks for advanced features!.
-			if (FlxG.keys.justPressed.PLUS)			moreSnow();
-			if (FlxG.keys.justPressed.MINUS)		lessSnow();
+			if (Reg.inputJustPressed(Reg.ACT_SNOW_MORE))			moreSnow();
+			if (Reg.inputJustPressed(Reg.ACT_SNOW_LESS))			lessSnow();
 
-			if (FlxG.keys.justPressed.K)			Key.cycle();
-			if (FlxG.keys.justPressed.COMMA)		Mode.cycle("Left");
-			if (FlxG.keys.justPressed.PERIOD)		Mode.cycle("Right");
-			if (FlxG.keys.justPressed.SLASH) 		Scale.toPentatonic();
-			if (FlxG.keys.justPressed.P) 			Pedal.toggle();
+			if (Reg.inputJustPressed(Reg.ACT_CHANGEKEY))			Key.cycle();
+			if (Reg.inputJustPressed(Reg.ACT_MUSICMODE_L))			Mode.cycle("Left");
+			if (Reg.inputJustPressed(Reg.ACT_MUSICMODE_R))			Mode.cycle("Right");
+			if (Reg.inputJustPressed(Reg.ACT_PENTATONICS))	 		Scale.toPentatonic();
+			if (Reg.inputJustPressed(Reg.ACT_PEDALPOINT)) 			Pedal.toggle();
 
-			if (FlxG.keys.justPressed.LBRACKET)		Playback.cycle("Left");
-			if (FlxG.keys.justPressed.RBRACKET)		Playback.cycle("Right");
-			if (FlxG.keys.justPressed.ENTER) 		Playback.polarity();
-			if (FlxG.keys.justPressed.BACKSLASH)	Playback.resetRestart();
+			if (Reg.inputJustPressed(Reg.ACT_GAMEMODE_L))			Playback.cycle("Left");
+			if (Reg.inputJustPressed(Reg.ACT_GAMEMODE_R))			Playback.cycle("Right");
+			//if (FlxG.keys.justPressed.ENTER) 		Playback.polarity(); ???
+			if (Reg.inputJustPressed(Reg.ACT_RESET))				Playback.resetRestart();
 
-			if (FlxG.keys.justPressed.SHIFT)		Playback.staccato();
-			if (FlxG.keys.justPressed.I)			improvise();
-			if (FlxG.keys.justPressed.ZERO)			autoPilot();
+			if (Reg.inputJustPressed(Reg.ACT_NOTE_LENGTH))			Playback.staccato();
+			if (Reg.inputJustPressed(Reg.ACT_IMPROV))				improvise();
+			if (Reg.inputJustPressed(Reg.ACT_AUTOPILOT))			autoPilot();
 
-			if (FlxG.keys.justPressed.H)			HUD.toggle();
-			if (FlxG.keys.justPressed.M)			HUD.midi();
+			if (Reg.inputJustPressed(Reg.ACT_HUD))					HUD.toggle();
+			if (Reg.inputJustPressed(Reg.ACT_SAVE))					HUD.midi();
 
 			#if !flash
 			if (FlxG.keys.justPressed.F)			FlxG.fullscreen = !FlxG.fullscreen;

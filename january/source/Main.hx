@@ -34,7 +34,9 @@ class Main extends Sprite
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
 
+		Reg.initControls();
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
+		
 		FlxG.scaleMode = new PixelPerfectScaleMode();
 		FlxG.sound.muteKeys = null;
 		FlxG.sound.volumeDownKeys = null;

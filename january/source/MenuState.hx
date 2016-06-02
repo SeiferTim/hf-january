@@ -52,10 +52,10 @@ class MenuState extends FlxState
 	
 	override public function update(elapsed:Float):Void
 	{
-		#if !FLX_NO_KEYBOARD
-		if (FlxG.keys.anyJustReleased([SPACE, ENTER]))
+		
+		if (Reg.inputJustReleased(Reg.ACT_ANY))
 			newState();
-		#end
+		
 		
 		#if !FLX_NO_MOUSE
 		if (FlxG.mouse.justReleased)

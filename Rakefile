@@ -33,6 +33,7 @@ task :build_proj do
   end
   puts "Done Building Project...";
   FileUtils.mv('./january/export/flash/bin/january.swf', './january-site/january.swf')
+  FileUtils.mkdir('./january-site/downloads')
   zipWin = ZipFileGenerator.new('./january/export/windows/cpp/bin', './january-site/downloads/january-win.zip')
   zipWin.write();
   zipMac = ZipFileGenerator.new('./january/export/mac64/neko/bin', './january-site/downloads/january-mac.zip')

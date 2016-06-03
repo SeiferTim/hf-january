@@ -290,7 +290,7 @@ class PlayState extends FlxState
 
 			if (Reg.inputJustPressed(Reg.ACT_GAMEMODE_L))			Playback.cycle("Left");
 			if (Reg.inputJustPressed(Reg.ACT_GAMEMODE_R))			Playback.cycle("Right");
-			//if (FlxG.keys.justPressed.ENTER) 		Playback.polarity(); ???
+			if (Reg.inputJustPressed(Reg.ACT_REVERSE))				Playback.polarity();
 			if (Reg.inputJustPressed(Reg.ACT_RESET))				Playback.resetRestart();
 
 			if (Reg.inputJustPressed(Reg.ACT_NOTE_LENGTH))			Playback.staccato();

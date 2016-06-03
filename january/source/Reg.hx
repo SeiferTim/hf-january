@@ -39,7 +39,8 @@ class Reg
 	public static inline var ACT_SNOW_MORE:Int		= 	17;
 	public static inline var ACT_NOTE_LENGTH:Int	= 	18;
 	public static inline var ACT_SAVE:Int			= 	19;
-	public static inline var ACT_ANY:Int			= 	20;
+	public static inline var ACT_REVERSE:Int			= 	20;
+	public static inline var ACT_ANY:Int			= 	21;
 	
 	
 	#if !FLX_NO_KEYBOARD
@@ -66,6 +67,7 @@ class Reg
 	public static var KEY_DEFAULT_SNOW_MORE:Array<String> 		= ["PLUS"];
 	public static var KEY_DEFAULT_NOTE_LENGTH:Array<String> 	= ["SHIFT"];
 	public static var KEY_DEFAULT_SAVE:Array<String>	 		= ["M"];
+	public static var KEY_DEFAULT_REVERSE:Array<String>	 		= ["ENTER"];
 	#end
 	#if !FLX_NO_GAMEPAD
 	public static var ActionsButtons:Array<Array<String>>;
@@ -73,8 +75,8 @@ class Reg
 	public static var BTN_DEFAULT_ANY:Array<String> 			= ["ANY"];
 	public static var BTN_DEFAULT_PLAYER_MOVE_L:Array<String> 	= ["LEFT_STICK_X_NEG"];
 	public static var BTN_DEFAULT_PLAYER_MOVE_R:Array<String> 	= ["LEFT_STICK_X_POS"];
-	public static var BTN_DEFAULT_TONGUE_OUT:Array<String> 		= ["LEFT_STICK_Y_NEG"];
-	public static var BTN_DEFAULT_TONGUE_IN:Array<String> 		= ["LEFT_STICK_Y_POS"];
+	public static var BTN_DEFAULT_TONGUE_OUT:Array<String> 		= ["RIGHT_STICK_Y_NEG"];
+	public static var BTN_DEFAULT_TONGUE_IN:Array<String> 		= ["RIGHT_STICK_Y_POS"];
 	public static var BTN_DEFAULT_AUTOPILOT:Array<String> 		= ["LEFT_STICK_CLICK"];
 	public static var BTN_DEFAULT_IMPROV:Array<String> 			= ["RIGHT_STICK_CLICK"];
 	public static var BTN_DEFAULT_GAMEMODE_L:Array<String> 		= ["LEFT_TRIGGER"];
@@ -91,6 +93,7 @@ class Reg
 	public static var BTN_DEFAULT_SNOW_MORE:Array<String> 		= ["DPAD_DOWN"];
 	public static var BTN_DEFAULT_NOTE_LENGTH:Array<String> 	= ["DPAD_LEFT", "DPAD_RIGHT"];
 	public static var BTN_DEFAULT_SAVE:Array<String>	 		= ["GUIDE"];
+	public static var BTN_DEFAULT_REVERSE:Array<String>	 		= [];
 	#end
 	
 	#if !FLX_NO_KEYBOARD
@@ -147,6 +150,7 @@ class Reg
 		ActionsKeys.push(KEY_DEFAULT_SNOW_MORE);
 		ActionsKeys.push(KEY_DEFAULT_NOTE_LENGTH);
 		ActionsKeys.push(KEY_DEFAULT_SAVE);
+		ActionsKeys.push(KEY_DEFAULT_REVERSE);
 		ActionsKeys.push(KEY_DEFAULT_ANY);
 		#end
 		#if !FLX_NO_GAMEPAD
@@ -171,6 +175,7 @@ class Reg
 		ActionsButtons.push(BTN_DEFAULT_SNOW_MORE);
 		ActionsButtons.push(BTN_DEFAULT_NOTE_LENGTH);
 		ActionsButtons.push(BTN_DEFAULT_SAVE);
+		ActionsButtons.push(BTN_DEFAULT_REVERSE);
 		ActionsButtons.push(BTN_DEFAULT_ANY);
 		#end
 		
@@ -223,6 +228,8 @@ class Reg
 					changeKey(ACT_NOTE_LENGTH, r.matched(2));
 				case "KEY_SAVE":
 					changeKey(ACT_SAVE, r.matched(2));
+				case "KEY_REVERSE":
+					changeKey(ACT_REVERSE, r.matched(2));
 				#end
 				#if !FLX_NO_GAMEPAD
 				case "BTN_PLAYER_MOVE_L": 
@@ -265,6 +272,8 @@ class Reg
 					changeButton(ACT_NOTE_LENGTH, r.matched(2));
 				case "BTN_SAVE":
 					changeButton(ACT_SAVE, r.matched(2));
+				case "BTN_REVERSE":
+					changeButton(ACT_REVERSE, r.matched(2));
 				#end
 				default:
 					

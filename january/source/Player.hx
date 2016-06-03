@@ -19,6 +19,8 @@ class Player extends FlxSprite
 	/** Whether the player's tongue is up. */
 	public var tongueUp:Bool = false;
 
+	private var wasMoving:Bool = false;
+	
 	public function new()
 	{
 		x = X_INIT;
@@ -52,6 +54,7 @@ class Player extends FlxSprite
 		//////////////
 
 		acceleration.x = 0;
+		
 
 		if ( (animation.frameIndex >= 11 && animation.frameIndex <= 14) || (animation.frameIndex >= 27 && animation.frameIndex <= 31) || (animation.frameIndex >= 44 && animation.frameIndex <= 47) || (animation.frameIndex >= 60 && animation.frameIndex <= 64) )
 			maxVelocity.x = 20;
@@ -61,19 +64,30 @@ class Player extends FlxSprite
     if (Reg.inputPressed(Reg.ACT_SPEEDUP))
 			maxVelocity.x = 60;
 		
-		if (Reg.inputPressed(Reg.ACT_PLAYER_MOVE_L) || (PlayState.onAutoPilot && PlayState.autoPilotMovement == "Left"))
+			
+		var left:Bool = false;
+		var right:Bool = false;
+		
+		left = left || Reg.inputPressed(Reg.ACT_PLAYER_MOVE_L) || (PlayState.onAutoPilot && PlayState.autoPilotMovement == "Left");
+		right = right || Reg.inputPressed(Reg.ACT_PLAYER_MOVE_R) || (PlayState.onAutoPilot && PlayState.autoPilotMovement == "Right");
+		if ((left && right) || (PlayState.onAutoPilot && PlayState.autoPilotMovement == "Still"))
+			left = right = false;
+			
+		if (left)
 		{
 			facing = FlxObject.LEFT;
 			SnowflakeManager.timbre = "Secondary";
 			velocity.x = -maxVelocity.x;
+			wasMoving = true;
 		}
-		else if (Reg.inputPressed(Reg.ACT_PLAYER_MOVE_R) || (PlayState.onAutoPilot && PlayState.autoPilotMovement == "Right"))
+		else if (right)
 		{
 			facing = FlxObject.RIGHT;
 			SnowflakeManager.timbre = "Primary";
 			velocity.x = maxVelocity.x;
+			wasMoving = true;
 		}
-		else if (Reg.inputJustReleased(Reg.ACT_PLAYER_MOVE_L) || Reg.inputJustReleased(Reg.ACT_PLAYER_MOVE_R) || (PlayState.onAutoPilot && PlayState.autoPilotMovement == "Still"))
+		if (wasMoving && !left && !right)
 		{
 			drag.x = 100;
 			stopped = true;

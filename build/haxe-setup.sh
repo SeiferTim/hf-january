@@ -12,6 +12,7 @@ mkdir -p ~/haxe/lib
 haxelib setup ~/haxe/lib
 haxelib install lime > /dev/null
 haxelib install openfl > /dev/null
+haxelib install hxcpp > /dev/null
 haxelib git flixel https://github.com/HaxeFlixel/flixel > /dev/null
 haxelib git flixel-addons https://github.com/HaxeFlixel/flixel-addons > /dev/null
 haxelib git flixel-tools https://github.com/HaxeFlixel/flixel-tools > /dev/null

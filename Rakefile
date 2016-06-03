@@ -32,6 +32,7 @@ task :build_proj do
     exit 1
   end
   puts "Done Building Project...";
+   Dir.entries('.').select {|entry| File.directory? File.join('/your_dir',entry) and !(entry =='.' || entry == '..') }
   FileUtils.mv('./january/export/flash/bin/january.swf', './january-site/january.swf')
   FileUtils.mkdir('./january-site/downloads')
   zipWin = ZipFileGenerator.new('./january/export/windows/cpp/bin', './january-site/downloads/january-win.zip')

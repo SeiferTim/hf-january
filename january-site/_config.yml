@@ -1,0 +1,18 @@
+safe: false
+permalink: pretty
+
+gems:
+  - jekyll-assets
+  - jekyll-sitemap
+  - jekyll-autolink_email
+  - jekyll_version_plugin
+  - bootstrap-sass
+  - font-awesome-sass
+  - mini_magick
+
+
+assets:
+    js_compressor: yui
+
+exclude: [vendor, .gitignore, Gemfile, Gemfile.lock, README.md, Rakefile, credentials.yaml, .travis.yml, build, key, key.enc]
+include: [downloads]

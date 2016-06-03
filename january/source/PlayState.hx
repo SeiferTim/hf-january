@@ -275,8 +275,8 @@ class PlayState extends FlxState
 		{
 			// Collision Check
 			if (player.tongueUp) FlxG.overlap(snow, player, onLick);
-			
-			
+
+
 
 			// Key input checks for advanced features!.
 			if (Reg.inputJustPressed(Reg.ACT_SNOW_MORE))			moreSnow();

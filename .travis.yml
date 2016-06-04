@@ -17,9 +17,9 @@ env:
   - PATH=$PATH:$NEKOPATH
   - PATH=$PATH:$HOME/haxe
   - HAXE_STD_PATH=$HOME/haxe/std
-  - secure: I3XvvxHmvPcmggemzLbLNBcqwchKSAc/94I02DWa/f/e9JwKu1ePJz4fTfozFBXoNV3fra836+gx8mnvg3otpMGrnmx5qup02dVKMVCAltHeUgMI2nZ2c2sZSbh2P0kSf9wVff31c6pqdRwVPB5JZEfNtZFUNQv2w6RHzam0+sovKuAiG7EFYSFbZ+e/ItDtt3JbMmELO/ptgOsS5fdVyXwPAH9mqBhjLJfGfYSLTqKhSXJVa5ZOQ80k/XjerhB3lwhjGIVxTU5KD9jg9+F6m86t0zXOyF0i+fT/9P8I3RGl97FP6AlBOYajPQ79xgzmgdHZ82g72V8cVdFpCdI6AmujwZFuVfR8PrZ7tnBFsVEuc7SVuueuqOx0yuB5ybuR/Dupw84GM3ibN01UFkQTqGp5jMk10RqVrwtYU/C4r3D64axlGw60rSqiyEmgoUKQ6xRAKec6hW6RCJTC97ohnCW+zTbRIPrk5voT2hpE2Pr4q6vtGAPaaKPqX9NHjbabMnuHAeYTre34WEmDHMdy1wEUGC+4sA6oO4ufr4jaNtbRxXytC8DFyHqvSZbVatBMARGI5vRrSatziK/aDYRq8fo1C4UTfUgF8tH1g+/ReEP/cXCeMAFuicLDp4OZQlCfK+NyK7VD9zfSIwPMu+P14Owi0qsq8NbHjdWtmk5mQOI=
+  - secure: J2SFFjbKQwpLB5uZzjrvwRjVpHnHhRCDNsigt1bERLTbvRUTQOvWhKPuMOk4Rs/2CwfCkkST8NyoP5h7ymGVFahc6t3yd8LljHNZyo7dmkQD4zfPBr5uoGnCVOcF1GbWhnNhBNGK/6INRDFBJ768wzb437K+oUP1m1nli0RPNGcCwIJjCXaJtvsVJjnbiBMGDYx2O01+m7zqYvZ6PkQ7QXZ8uxgWaLID7JQBWDGXVeGqiFC8EotG28REaplz5ouahvLphSdRaLQli1WYPjA9wg7Zz05UnlUtWWeNuVthTB9gInCe0t3pFC9eQzQ3NuiUevnUjXleDnolFRPYqcwAJyR3uyNXlGByifAM3Wvj8NF+5TdorS0wMrpIG4o6ShYgDt7C91UnkEI6KwhsKq+MWo/6sk2ZgcJv8EZHY4r4fsS92rn8eza3sv2QWPumAJsnojj7RRnh6FRjNH0Ei6nysSWDd5hPO07fL529dTK7K2fDOkcW7EHC4S3TdcN197TGbUv33FwRxSCU5St1ho+vpOae9cE121BLTpQVSnDD2Ip/uXdCjioAIysuu3YsLrYUHjkDGMURKd6bOHWzSrDjqeBiStA6b+bGBTnK7f/lgaPgv+FdkGrGXEcR9OnkCLVv0uGVHgtLkhQMm99rn88cM83CLTizNE4ANQQlnlAn1hY=
 branches:
   only:
   - master
-after_success: if [[ "$TRAVIS_REPO_SLUG" == "SeiferTim/hf-january" ]]; then bundle exec
-  ruby ./build/serversync.rb; fi
+after_success: if [[ "$TRAVIS_REPO_SLUG" == "SeiferTim/hf-january" ]]; then bundle
+  exec ruby ./build/serversync.rb; fi

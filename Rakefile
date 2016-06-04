@@ -18,30 +18,30 @@ task :build_proj do
     puts "ERROR! - #{error}"
     exit 1
   end
-
-  results, error, status = Open3.capture3("haxelib", "run", "flixel-tools", "buildprojects", "windows", "-dir", ".")
-  puts results
-  if !status.success?
-    puts "ERROR! - #{error}"
-    exit 1
-  end
-  results, error, status = Open3.capture3("haxelib", "run", "flixel-tools", "buildprojects", "mac", "-dir", ".")
-  puts results
-  if !status.success?
-    puts "ERROR! - #{error}"
-    exit 1
-  end
+##
+#  results, error, status = Open3.capture3("haxelib", "run", "flixel-tools", "buildprojects", "windows", "-dir", ".")
+#  puts results
+# if !status.success?
+#    puts "ERROR! - #{error}"
+#    exit 1
+#  end
+#  results, error, status = Open3.capture3("haxelib", "run", "flixel-tools", "buildprojects", "mac", "-dir", ".")
+#  puts results
+#  if !status.success?
+#    puts "ERROR! - #{error}"
+#    exit 1
+#  end
+#
   puts "Done Building Project...";
   
-  puts Dir.glob('./**/*').reject{ |e| File.file? e }
-  
   FileUtils.mv('./january/export/flash/bin/january.swf', './january-site/january.swf')
-  FileUtils.mkdir('./january-site/downloads')
-  zipWin = ZipFileGenerator.new('./january/export/windows/cpp/bin', './january-site/downloads/january-win.zip')
-  zipWin.write();
-  zipMac = ZipFileGenerator.new('./january/export/mac64/neko/bin', './january-site/downloads/january-mac.zip')
-  zipMac.write();
-
+##
+#  FileUtils.mkdir('./january-site/downloads')
+#  zipWin = ZipFileGenerator.new('./january/export/windows/cpp/bin', './january-site/downloads/january-win.zip')
+#  zipWin.write();
+#  zipMac = ZipFileGenerator.new('./january/export/mac64/neko/bin', './january-site/downloads/january-mac.zip')
+#  zipMac.write();
+#
 end
 
 

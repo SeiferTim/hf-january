@@ -91,7 +91,7 @@ class MIDI
 	/** Note Ons that haven't been set to Note Off yet. */
 	private static var unresolvedPitches2:Array<Int> = [];
 	
-	public static function generate(event:MouseEvent):Void
+	public static function generate(?event:MouseEvent):Void
 	{									
 		var score:Int = 0;
 		var kind:String = "";

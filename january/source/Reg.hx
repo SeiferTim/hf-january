@@ -94,7 +94,14 @@ class Reg
 	public static var BTN_DEFAULT_NOTE_LENGTH:Array<String> 	= ["DPAD_LEFT", "DPAD_RIGHT"];
 	public static var BTN_DEFAULT_SAVE:Array<String>	 		= ["GUIDE"];
 	public static var BTN_DEFAULT_REVERSE:Array<String>	 		= [];
+	
+	public static var wasLeftStickX:Int = 0;
+	public static var wasLeftStickY:Int = 0;
+	public static var wasRightStickX:Int = 0;
+	public static var wasRightStickY:Int = 0;
 	#end
+	
+	
 	
 	#if !FLX_NO_KEYBOARD
 	public static function changeKey(ActIndex:Int, ChangeTo:String):Void
@@ -111,6 +118,43 @@ class Reg
 	#end
 	
 	#if !FLX_NO_GAMEPAD
+	public static function stickCheck():Void
+	{
+		if (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) < 0)
+			wasLeftStickX = -1;
+		else if (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) > 0)
+			wasLeftStickX = 1;
+		else
+			wasLeftStickX = 0;
+			
+		
+		if (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) < 0)
+			wasLeftStickY = -1;
+		else if (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) > 0)
+			wasLeftStickY = 1;
+		else
+			wasLeftStickY = 0;
+			
+		if (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) < 0)
+			wasRightStickX = -1;
+		else if (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) > 0)
+			wasRightStickX = 1;
+		else
+			wasRightStickX = 0;
+			
+		
+		if (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) < 0)
+			wasRightStickY = -1;
+		else if (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) > 0)
+			wasRightStickY = 1;
+		else
+			wasRightStickY = 0;
+			
+		
+	}
+	
+	
+	
 	public static function changeButton(ActIndex:Int, ChangeTo:String):Void
 	{
 		ChangeTo = StringTools.trim(ChangeTo);
@@ -307,31 +351,34 @@ class Reg
 		#if !FLX_NO_GAMEPAD
 		if (FlxG.gamepads.lastActive != null)
 		{
+			var any:Bool = false;
 			for (s in ActionsButtons[Input])
 			{
 				switch (s) 
 				{
 					case "LEFT_STICK_X_NEG":
-						isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) < 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) < 0;
 					case "LEFT_STICK_X_POS":
-						isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) > 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) > 0;
 					case "LEFT_STICK_Y_NEG":
-						isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) < 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) < 0;
 					case "LEFT_STICK_Y_POS":
-						isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) > 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) > 0;
 					case "RIGHT_STICK_X_NEG":
-						isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) < 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) < 0;
 					case "RIGHT_STICK_X_POS":
-						isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) > 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) > 0;
 					case "RIGHT_STICK_Y_NEG":
-						isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) < 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) < 0;
 					case "RIGHT_STICK_Y_POS":
-						isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) > 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) > 0;
 					case "ANY":
-						isPressed = isPressed || FlxG.gamepads.lastActive.pressed.ANY;
+							
 					default:
 						isPressed = isPressed || FlxG.gamepads.lastActive.checkStatus(FlxGamepadInputID.fromString(s), FlxInputState.PRESSED);
 				}
+				if (s == "ANY")
+					isPressed = isPressed || FlxG.gamepads.lastActive.pressed.ANY || any;
 			}
 		}
 		#end
@@ -351,17 +398,38 @@ class Reg
 			else
 				isPressed = isPressed || FlxG.keys.checkStatus(FlxKey.fromString(s), FlxInputState.JUST_PRESSED);
 		}
-		
 		#end
 		#if !FLX_NO_GAMEPAD
 		if (FlxG.gamepads.lastActive != null)
 		{
+			var any:Bool = false;
 			for (s in ActionsButtons[Input])
 			{
+				switch (s) 
+				{
+					case "LEFT_STICK_X_NEG":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) < 0 && wasLeftStickX == 0);
+					case "LEFT_STICK_X_POS":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) > 0 && wasLeftStickX == 0);
+					case "LEFT_STICK_Y_NEG":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) < 0 && wasLeftStickY == 0);
+					case "LEFT_STICK_Y_POS":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) > 0 && wasLeftStickY == 0);
+					case "RIGHT_STICK_X_NEG":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) < 0 && wasRightStickX == 0);
+					case "RIGHT_STICK_X_POS":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) > 0 && wasRightStickX == 0);
+					case "RIGHT_STICK_Y_NEG":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) < 0 && wasRightStickY == 0);
+					case "RIGHT_STICK_Y_POS":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) > 0 && wasRightStickY == 0);
+					case "ANY":
+						
+					default:
+						isPressed = isPressed || FlxG.gamepads.lastActive.checkStatus(FlxGamepadInputID.fromString(s), FlxInputState.JUST_PRESSED);
+				}					
 				if (s == "ANY")
-					isPressed = isPressed || FlxG.gamepads.lastActive.justPressed.ANY;
-				else
-					isPressed = isPressed || FlxG.gamepads.lastActive.checkStatus(FlxGamepadInputID.fromString(s), FlxInputState.JUST_PRESSED);
+					isPressed = isPressed || FlxG.gamepads.lastActive.justPressed.ANY || any;				
 			}
 		}
 		#end
@@ -385,12 +453,34 @@ class Reg
 		#if !FLX_NO_GAMEPAD
 		if (FlxG.gamepads.lastActive != null)
 		{
+			var any:Bool = false;
 			for (s in ActionsButtons[Input])
 			{
+				switch (s) 
+				{
+					case "LEFT_STICK_X_NEG":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) == 0 && wasLeftStickX < 0);
+					case "LEFT_STICK_X_POS":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) == 0 && wasLeftStickX > 0);
+					case "LEFT_STICK_Y_NEG":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) == 0 && wasLeftStickY < 0);
+					case "LEFT_STICK_Y_POS":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) == 0 && wasLeftStickY > 0);
+					case "RIGHT_STICK_X_NEG":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) == 0 && wasRightStickX < 0);
+					case "RIGHT_STICK_X_POS":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) == 0 && wasRightStickX > 0);
+					case "RIGHT_STICK_Y_NEG":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) == 0 && wasRightStickY < 0);
+					case "RIGHT_STICK_Y_POS":
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) == 0 && wasRightStickY > 0);
+					case "ANY":
+						
+					default:
+						isPressed = isPressed || FlxG.gamepads.lastActive.checkStatus(FlxGamepadInputID.fromString(s), FlxInputState.JUST_RELEASED);
+				}
 				if (s == "ANY")
-					isPressed = isPressed || FlxG.gamepads.lastActive.justReleased.ANY;
-				else
-					isPressed = isPressed || FlxG.gamepads.lastActive.checkStatus(FlxGamepadInputID.fromString(s), FlxInputState.JUST_RELEASED);
+					isPressed = isPressed || FlxG.gamepads.lastActive.justReleased.ANY || any;
 			}
 		}
 		#end

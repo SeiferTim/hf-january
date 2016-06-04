@@ -89,6 +89,7 @@ class Player extends FlxSprite
 		}
 		if (wasMoving && !left && !right)
 		{
+			wasMoving = false;
 			drag.x = 100;
 			stopped = true;
 		}
@@ -116,23 +117,26 @@ class Player extends FlxSprite
 		{
 			if (tongueUp == false && up)	// and still looking up
 			{
-				animation.play("tongueUp");
+				animation.play("tongueUp",true);
 				tongueUp = true;
 			}
 			else if (tongueUp == true && down)
 			{
-				animation.play("tongueDown");
+				animation.play("tongueDown",true);
 				tongueUp = false;
 			}
 
 			if (stopped == true)
 			{
 				if (tongueUp == false)
+				{
 					animation.play("idle");
+				}
 				else
+				{
 					animation.play("tongueUpStopped");
+				}
 			}
-
 			stopped = false;
 		}
 

@@ -158,6 +158,11 @@ class PlayState extends FlxState
 
 
 		super.create();
+		
+		FlxG.watch.add(Reg, "wasLeftStickX");
+		FlxG.watch.add(Reg, "wasLeftStickY");
+		FlxG.watch.add(Reg, "wasRightStickX");
+		FlxG.watch.add(Reg, "wasRightStickY");
 	}
 
 	static public function playSound(Sound:String, Volume:Float, Pan:Float):SoundDef
@@ -259,6 +264,8 @@ class PlayState extends FlxState
 			}
 		}
 
+		
+		
 		super.update(elapsed );
 
 		// Loop Sky Background
@@ -300,6 +307,10 @@ class PlayState extends FlxState
 			if (Reg.inputJustPressed(Reg.ACT_HUD))					HUD.toggle();
 			if (Reg.inputJustPressed(Reg.ACT_SAVE))					HUD.midi();
 
+			if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.S)
+				MIDI.generate();
+			
+			
 			#if !flash
 			if (FlxG.keys.justPressed.F)			FlxG.fullscreen = !FlxG.fullscreen;
 			if (FlxG.keys.justPressed.ESCAPE)		HUD.promptExit();
@@ -314,6 +325,7 @@ class PlayState extends FlxState
 			MIDI.timer = 0;
 			MIDI.logged = false;
 		}
+		Reg.stickCheck();
 	}
 
 	/**

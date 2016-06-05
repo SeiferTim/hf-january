@@ -10,38 +10,39 @@ class Harmony extends Snowflake
 {
 
 	//[Embed(source="../assets/art/flakes/harmony.png")] private var sprite: Class;
-		
+
 	/** Default volume level for the harmony tone (not the default note). */
 	public static var VOLUME:Float = Note.MAX_VOLUME * 0.33;
-	
+
 	public function new()
 	{
 		super();
-		
+
 		loadGraphic(AssetPaths.harmony__png, true);
-		
+
 		windY = 13;
 		volume = FlxG.random.float(Note.MAX_VOLUME * 0.33, Note.MAX_VOLUME * 0.83);
-		
+
 		animation.add("default", [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1], 6, true);
-		
+
 		pedalAllowed = true;
+		playsNote = true;
 	}
-	
+
 	public override function onLick():Void
-	{			
+	{
 		super.onLick();
-		
+
 		playNote();
 		playHarmonyTone();
 	}
-	
+
 	private function playHarmonyTone():Void
-	{					
+	{
 		var harmonyTone:String;
-		var choices:Array<String> = [];	
+		var choices:Array<String> = [];
 		var i:Map<String, String> = Intervals.loadout;
-		
+
 			 if (Note.lastAbsolute == i.get("one1")) choices = [i.get("thr1"), i.get("fiv1"), i.get("thr2"), i.get("fiv2")];
 		else if (Note.lastAbsolute == i.get("two1")) choices = [i.get("fiv1"), i.get("sev1"), i.get("fiv2")];
 		else if (Note.lastAbsolute == i.get("thr1")) choices = [i.get("fiv1"), i.get("one2")];
@@ -65,38 +66,38 @@ class Harmony extends Snowflake
 		else if (Note.lastAbsolute == i.get("sev3")) choices = [i.get("thr3"), i.get("fiv3")];
 		else if (Note.lastAbsolute == i.get("one4")) choices = [i.get("thr3"), i.get("fiv3")];
 		else trace("lastAbsolute not available for Harmony");
-		
+
 		harmonyTone = FlxG.random.getObject(choices);
-		
+
 		var harmony:PlayState.SoundDef;
-		
+
 		if (SnowflakeManager.timbre == "Primary")
 		{
 			harmony = PlayState.loadSound(harmonyTone, Harmony.VOLUME, -1 * pan);
-			
-			
+
+
 		}
 		else
 		{
 			var modifiedHarmony:String = "_" + harmonyTone;
 			harmony = PlayState.loadSound(modifiedHarmony, Harmony.VOLUME / SnowflakeManager._volumeMod, -1 * pan);
-			
+
 		}
-		
+
 		PlayState.flamNotes.push({name: harmony.name, note: harmony.note});
 		PlayState.flamTimer = PlayState.flamRate / 1000;
-		
+
 		inStaccato(harmony.note);
-		
+
 		// LOGS
 		Note.lastHarmony = harmonyTone;
 	}
-	
+
 	public override function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-		
+
 		animation.play("default");
 	}
-	
+
 }

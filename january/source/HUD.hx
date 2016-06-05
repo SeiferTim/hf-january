@@ -163,8 +163,9 @@ class HUD
 		}
 	}
 
-	private static function enharmonic(text:String):String
+	public static function enharmonic(text:String, octave:Bool = false):String
 	{
+		var oct:String = text.charAt(text.length - 1);
 		text = text.substr(0, text.length - 1);
 
 		if (findSharp.match(text) && findSharp.matchedPos().pos == 1) {
@@ -182,6 +183,8 @@ class HUD
 
 			text += "b";
 		}
+
+		text += octave ? oct : "";
 
 		return text;
 	}

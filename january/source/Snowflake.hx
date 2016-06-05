@@ -19,8 +19,7 @@ import snowflakes.Small;
 import snowflakes.Transpose;
 import snowflakes.Vamp;
 
-class Snowflake extends FlxSprite
-{
+class Snowflake extends FlxSprite {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// MUSIC-RELATED DEFINITIONS ///////////////////////////////////////////////////////////////////////////////////
@@ -32,10 +31,10 @@ class Snowflake extends FlxSprite
 	var pan:Float = FlxG.random.float(-1, 1);
 	/** Whether the Snowflake in question allows for a pedal tone. */
 	var pedalAllowed:Bool = false;
-
-
-	// List of Secondary Timbre Classes
-	//_C1; _Cs1; _D1; _Ds1; _E1; _F1; _Fs1; _G1; _Gs1; _A1; _As1; _B1; _C2; _Cs2; _D2; _Ds2; _E2; _F2; _Fs2; _G2; _Gs2; _A2; _As2; _B2; _C3; _Cs3; _D3; _Ds3; _E3; _F3; _Fs3; _G3; _Gs3; _A3; _As3; _B3; _C4; _Cs4; _D4; _Ds4; _E4; _F4; _Fs4; _G4; _Gs4; _A4; _As4; _B4;
+	/** Whether the Snowflake in question plays a note. */
+	public var playsNote:Bool = false;
+	/** The note this Snowflake is slated to play. */
+	public var noteName:String = "n/a";
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// NON-MUSIC DEFINITIONS ///////////////////////////////////////////////////////////////////////////////////
@@ -50,23 +49,17 @@ class Snowflake extends FlxSprite
 	/** Vertical modifier for snowflake movement. */
 	var windY:Float = 0;
 
-
-
-	// List of classes for getDefinitionByName() to use
-	//Small; Octave; Harmony; Chord; Vamp; Transpose;
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public function new()
-	{
+	public function new() {
+
 		super();
 		exists = false;
 	}
 
-
 	/** Spawns snowflakes. */
-	public function spawn(flakeType:String, spawnX:Float = 0):Void
-	{
+	public function spawn(flakeType:String, spawnX:Float = 0):Void {
+
 		// POSITION
 		if (spawnX != 0)
 			x = spawnX;
@@ -104,9 +97,9 @@ class Snowflake extends FlxSprite
 		///////////////
 
 		if (( y > FlxG.height - 14 && (x + width <= PlayState.player.x || x >= PlayState.player.x + PlayState.player.width)))
-			kill();
+			super.kill();
 		else if (y >= FlxG.height - 1 || x < 0 - width || x > FlxG.width)
-			kill();
+			super.kill();
 	}
 
 	/** Called when a Snowflake has been licked. */
@@ -118,9 +111,7 @@ class Snowflake extends FlxSprite
 
 		// Count How Many of Each Flake Type is Licked, For Custom MIDI File Name
 		if (type != "Small")
-		{
 			PlayState.scores.set(type, PlayState.scores.get(type) + 1);
-		}
 
 		lastLickedType = type;
 	}
@@ -148,13 +139,14 @@ class Snowflake extends FlxSprite
 	/** Plays a repeat note, pulled from a sequence of stored notes. */
 	private function playSequence():Void
 	{
-		//FlxG.log("playback()");
 		var sound:FlxSound;
 		if (Playback.sequence.length == 0)
 		{
 			if (Note.lastAbsolute != null)
 			{
-				PlayState.playSound(Note.lastAbsolute, volume, pan);
+
+				noteName = Note.lastAbsolute;
+				PlayState.playSound(noteName, volume, pan);
 				Playback.index = 1;
 			}
 			else
@@ -166,19 +158,12 @@ class Snowflake extends FlxSprite
 		{
 			// Convert Interval String in Sequence to Note, then play it.
 			var id:String = Playback.sequence[Playback.index];
-
+			noteName = Intervals.loadout.get(id);
 
 			if (SnowflakeManager.timbre == "Primary")
-			{
-
-				sound = PlayState.playSound(Intervals.loadout.get(id), volume, pan).note;
-			}
+				sound = PlayState.playSound(noteName, volume, pan).note;
 			else
-			{
-				var modifiedNote:String = "_" + Intervals.loadout.get(id);
-				sound = PlayState.playSound(modifiedNote, volume / SnowflakeManager._volumeMod, pan).note;
-			}
-
+				sound = PlayState.playSound("_" + noteName, volume / SnowflakeManager._volumeMod, pan).note;
 
 			inStaccato(sound);
 
@@ -226,23 +211,23 @@ class Snowflake extends FlxSprite
 	/** Play a note! Takes in an array of classes, and will pick one randomly. */
 	private function _play(options: Array<String>):Void
 	{
-		var randomNote:String = noteAdjustments(options);
+		noteName = noteAdjustments(options);
 		var sound:FlxSound;
 
 		if (SnowflakeManager.timbre == "Primary")
-			sound =PlayState.playSound(randomNote, volume, pan).note;
+			sound =PlayState.playSound(noteName, volume, pan).note;
 		else
 		{
-			var modifiedNote:FlxSoundAsset = "_" + randomNote;
+			var modifiedNote:FlxSoundAsset = "_" + noteName;
 			sound = PlayState.playSound( modifiedNote, volume/SnowflakeManager._volumeMod, pan).note;
 		}
 
 		inStaccato(sound);
 
 		// LOGS
-		MIDI.log(randomNote, volume);
+		MIDI.log(noteName, volume);
 		Note.secondToLastRecorded = Note.lastRecorded;
-		Note.lastRecorded = randomNote;
+		Note.lastRecorded = noteName;
 		Note.lastAbsolute = Note.lastRecorded;
 		HUD.logNote(volume, pan);
 	}
@@ -465,7 +450,6 @@ class Snowflake extends FlxSprite
 		}
 
 		return note;
-
 	}
 
 }

@@ -4,6 +4,8 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.text.FlxText;
 import music.Playback;
+import music.Note;
+import music.Pedal;
 
 class Text extends FlxText
 {
@@ -40,32 +42,56 @@ class Text extends FlxText
 		var _text:String = "";
 
 		// Store the number of the current place in the playback sequence when appropriate.
-		if (Playback.mode == "Repeat" && SnowRef.type != "Vamp")
-		{
-			if (Playback.reverse == false)
-			{
-				if (Playback.index != 0)
-					_text = Std.string(Playback.index);
-				else
-					_text = Std.string(Playback.sequence.length);
-			}
-			else
-			{
-				var indexString: Int = Playback.index + 2;
+		if (SnowRef.playsNote) {
 
-				if (indexString == Playback.sequence.length + 1)
-					_text = "1";
-				else
-					_text = Std.string(indexString);
+			if (Playback.mode == "Repeat") {
+
+				if (Playback.reverse == false) {
+
+					if (Playback.index != 0)
+						_text = Std.string(Playback.index);
+					else
+						_text = Std.string(Playback.sequence.length);
+				}
+				else {
+
+					var indexString: Int = Playback.index + 2;
+
+					if (indexString == Playback.sequence.length + 1)
+						_text = "1";
+					else
+						_text = Std.string(indexString);
+				}
 			}
+			else {
+
+				if (PlayState.inSpellMode) {
+
+					_text = Std.string(HUD.enharmonic(SnowRef.noteName, true));
+
+					if (SnowRef.type == "Harmony")
+						_text += "+" + Std.string(HUD.enharmonic(Note.lastHarmony, true));
+					else if (SnowRef.type == "Octave")
+						_text += "+" + Std.string(HUD.enharmonic(Note.lastOctave, true));
+
+					if (Pedal.mode)
+						_text += "/" + Std.string(HUD.enharmonic(Note.lastPedal, true));
+				}
+			}
+
+		}
+		else {
+
+			if (PlayState.inSpellMode)
+				_text = Std.string(HUD.modeName);
 		}
 
 		// Show the new text feedback.
 		if (_text != "")
-			show(_text, 5);
+			show(_text);
 	}
 
-	public function show(newText: String, offset: Int = 10):Void
+	public function show(newText: String, offset: Int = 7):Void
 	{
 		lifespan = 1;
 		text = newText;

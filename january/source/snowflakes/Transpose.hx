@@ -52,23 +52,27 @@ class Transpose extends Snowflake
 		// Run through all sounds.
 		for (sound in PlayState.sounds)
 		{
+			var noteOk:Bool = false;
+
 			// If the sound has volume,
 			if (sound.note != null && sound.note.active == true)
 			{
 				// Compare to current key notes.
-				for (note in i)
-				{
-					if (sound.name == note)
-						continue;
+				for (note in i) {
 
-					if (sound.name == "_" + note)
-						continue;
+					if (sound.name == note || sound.name == "_" + note) {
+
+						noteOk = true;
+						break;
+					}
 				}
+
+				if (noteOk)
+					continue;
 
 				// If a note made it this far, it's not in the current key, so fade it out.
 				sound.note.fadeOut(0.2);
 			}
 		}
 	}
-
 }

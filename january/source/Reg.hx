@@ -99,8 +99,8 @@ class Reg
 	public static var wasLeftStickY:Int = 0;
 	public static var wasRightStickX:Int = 0;
 	public static var wasRightStickY:Int = 0;
-	
-	public static inline var DEADZONE:Float = .1;
+
+	public static inline var DEADZONE:Float = .2;
 	#end
 
 

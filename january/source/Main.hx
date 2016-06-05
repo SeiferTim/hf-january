@@ -37,8 +37,11 @@ class Main extends Sprite
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
 		FlxG.scaleMode = new flixel.system.scaleModes.PixelPerfectScaleMode();
+
+		#if !FLX_NO_KEYBOARD
 		FlxG.sound.muteKeys = null;
 		FlxG.sound.volumeDownKeys = null;
 		FlxG.sound.volumeUpKeys = null;
+		#end
 	}
 }

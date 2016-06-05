@@ -274,7 +274,7 @@ class PlayState extends FlxState
 
 		if (HUD.promptText.exists)
 		{
-			#if !flash
+			#if ( !flash && !FLX_NO_KEYBOARD )
 			if (FlxG.keys.justPressed.Y)		Sys.exit(0);
 			else if (FlxG.keys.justPressed.N)	HUD.hideExit();
 			#end
@@ -306,12 +306,10 @@ class PlayState extends FlxState
 			if (Reg.inputJustPressed(Reg.ACT_HUD))					HUD.toggle();
 			if (Reg.inputJustPressed(Reg.ACT_SAVE))					HUD.midi();
 
-			if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.S)
-				MIDI.generate();
-
-			#if !flash
-			if (FlxG.keys.justPressed.F)			FlxG.fullscreen = !FlxG.fullscreen;
-			if (FlxG.keys.justPressed.ESCAPE)		HUD.promptExit();
+			#if (!flash && !FLX_NO_KEYBOARD)
+			if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.S)	MIDI.generate();
+			if (FlxG.keys.justPressed.F)								FlxG.fullscreen = !FlxG.fullscreen;
+			if (FlxG.keys.justPressed.ESCAPE)							HUD.promptExit();
 			#end
 		}
 

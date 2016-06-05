@@ -78,6 +78,7 @@ class HUD
 	{
 		//FlxG.stage.displayState = StageDisplayState.NORMAL;
 
+		#if !FLX_NO_MOUSE
 		if (FlxG.mouse.visible)
 		{
 			FlxG.mouse.visible = false;
@@ -88,6 +89,7 @@ class HUD
 			FlxG.mouse.visible = true;
 			FlxG.stage.addEventListener(MouseEvent.MOUSE_DOWN, MIDI.generate);
 		}
+		#end
 
 		midiButton.exists = !midiButton.exists;
 	}

@@ -99,6 +99,8 @@ class Reg
 	public static var wasLeftStickY:Int = 0;
 	public static var wasRightStickX:Int = 0;
 	public static var wasRightStickY:Int = 0;
+	
+	public static inline var DEADZONE:Float = .1;
 	#end
 
 
@@ -120,32 +122,32 @@ class Reg
 	#if !FLX_NO_GAMEPAD
 	public static function stickCheck():Void
 	{
-		if (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) < 0)
+		if (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) < -DEADZONE)
 			wasLeftStickX = -1;
-		else if (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) > 0)
+		else if (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) > DEADZONE)
 			wasLeftStickX = 1;
 		else
 			wasLeftStickX = 0;
 
 
-		if (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) < 0)
+		if (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) < -DEADZONE)
 			wasLeftStickY = -1;
-		else if (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) > 0)
+		else if (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) > DEADZONE)
 			wasLeftStickY = 1;
 		else
 			wasLeftStickY = 0;
 
-		if (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) < 0)
+		if (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) < -DEADZONE)
 			wasRightStickX = -1;
-		else if (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) > 0)
+		else if (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) > DEADZONE)
 			wasRightStickX = 1;
 		else
 			wasRightStickX = 0;
 
 
-		if (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) < 0)
+		if (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) < -DEADZONE)
 			wasRightStickY = -1;
-		else if (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) > 0)
+		else if (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) > DEADZONE)
 			wasRightStickY = 1;
 		else
 			wasRightStickY = 0;
@@ -351,21 +353,21 @@ class Reg
 				switch (s)
 				{
 					case "LEFT_STICK_X_NEG":
-						any = isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) < 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) < -DEADZONE;
 					case "LEFT_STICK_X_POS":
-						any = isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) > 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) > DEADZONE;
 					case "LEFT_STICK_Y_NEG":
-						any = isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) < 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) < -DEADZONE;
 					case "LEFT_STICK_Y_POS":
-						any = isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) > 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) > DEADZONE;
 					case "RIGHT_STICK_X_NEG":
-						any = isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) < 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) < -DEADZONE;
 					case "RIGHT_STICK_X_POS":
-						any = isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) > 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) > DEADZONE;
 					case "RIGHT_STICK_Y_NEG":
-						any = isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) < 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) < -DEADZONE;
 					case "RIGHT_STICK_Y_POS":
-						any = isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) > 0;
+						any = isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) > DEADZONE;
 					case "ANY":
 
 					default:
@@ -402,21 +404,21 @@ class Reg
 				switch (s)
 				{
 					case "LEFT_STICK_X_NEG":
-						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) < 0 && wasLeftStickX == 0);
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) < -DEADZONE && wasLeftStickX == 0);
 					case "LEFT_STICK_X_POS":
-						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) > 0 && wasLeftStickX == 0);
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) > DEADZONE && wasLeftStickX == 0);
 					case "LEFT_STICK_Y_NEG":
-						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) < 0 && wasLeftStickY == 0);
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) < -DEADZONE && wasLeftStickY == 0);
 					case "LEFT_STICK_Y_POS":
-						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) > 0 && wasLeftStickY == 0);
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) > DEADZONE && wasLeftStickY == 0);
 					case "RIGHT_STICK_X_NEG":
-						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) < 0 && wasRightStickX == 0);
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) < -DEADZONE && wasRightStickX == 0);
 					case "RIGHT_STICK_X_POS":
-						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) > 0 && wasRightStickX == 0);
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) > DEADZONE && wasRightStickX == 0);
 					case "RIGHT_STICK_Y_NEG":
-						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) < 0 && wasRightStickY == 0);
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) < -DEADZONE && wasRightStickY == 0);
 					case "RIGHT_STICK_Y_POS":
-						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) > 0 && wasRightStickY == 0);
+						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) > DEADZONE && wasRightStickY == 0);
 					case "ANY":
 
 					default:

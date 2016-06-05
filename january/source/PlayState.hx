@@ -75,6 +75,7 @@ class PlayState extends FlxState
 	public static var onAutoPilot:Bool = false;		// whether or not game is on autopilot or not
 	public static var autoPilotMovement:String = "Right";
 	public static var inImprovMode:Bool = false;	// whether or not game is in improv mode
+	public static var inSpellMode:Bool = false;		// whether or not notes and chords are displayed onLick.
 
 	/** Initialize game, create and add everything. */
 	override public function create():Void
@@ -82,11 +83,11 @@ class PlayState extends FlxState
 		Reg.score = SCORE_INIT;
 		FlxG.sound.volume = 1;
 		#if flash
-		FlxG.sound.playMusic(AssetPaths.ambience__mp3, 1.0);
+		FlxG.sound.playMusic(AssetPaths.ambience__mp3, 0.025);
 		#else
-		FlxG.sound.playMusic(AssetPaths.ambience__ogg, 1.0);
+		FlxG.sound.playMusic(AssetPaths.ambience__ogg, 0.025);
 		#end
-		FlxG.sound.music.fadeIn(2,0,0.1);
+		FlxG.sound.music.fadeIn(2, 0, 0.025);
 
 		// Set Channel 1 Instrument to Guitar
 		MIDI.trackEvents.push(0);
@@ -133,7 +134,7 @@ class PlayState extends FlxState
 		add(player);
 
 		// Create Snow
-		snow = new FlxTypedGroup<Snowflake>(1000);
+		snow = new FlxTypedGroup<Snowflake>();
 		add(snow);
 
 		// Add HUD
@@ -158,7 +159,7 @@ class PlayState extends FlxState
 
 
 		super.create();
-		
+
 		FlxG.watch.add(Reg, "wasLeftStickX");
 		FlxG.watch.add(Reg, "wasLeftStickY");
 		FlxG.watch.add(Reg, "wasRightStickX");
@@ -264,8 +265,8 @@ class PlayState extends FlxState
 			}
 		}
 
-		
-		
+
+
 		super.update(elapsed );
 
 		// Loop Sky Background
@@ -283,11 +284,8 @@ class PlayState extends FlxState
 			// Collision Check
 			if (player.tongueUp) FlxG.overlap(snow, player, onLick);
 
-
-
 			// Key input checks for advanced features!.
-			if (Reg.inputJustPressed(Reg.ACT_SNOW_MORE))			moreSnow();
-			if (Reg.inputJustPressed(Reg.ACT_SNOW_LESS))			lessSnow();
+			if (Reg.inputJustPressed(Reg.ACT_SNOW_FREQ))			changeSnow();
 
 			if (Reg.inputJustPressed(Reg.ACT_CHANGEKEY))			Key.cycle();
 			if (Reg.inputJustPressed(Reg.ACT_MUSICMODE_L))			Mode.cycle("Left");
@@ -301,6 +299,7 @@ class PlayState extends FlxState
 			if (Reg.inputJustPressed(Reg.ACT_RESET))				Playback.resetRestart();
 
 			if (Reg.inputJustPressed(Reg.ACT_NOTE_LENGTH))			Playback.staccato();
+			if (Reg.inputJustPressed(Reg.ACT_NOTE_NAMES))			spellMode();
 			if (Reg.inputJustPressed(Reg.ACT_IMPROV))				improvise();
 			if (Reg.inputJustPressed(Reg.ACT_AUTOPILOT))			autoPilot();
 
@@ -309,8 +308,7 @@ class PlayState extends FlxState
 
 			if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.S)
 				MIDI.generate();
-			
-			
+
 			#if !flash
 			if (FlxG.keys.justPressed.F)			FlxG.fullscreen = !FlxG.fullscreen;
 			if (FlxG.keys.justPressed.ESCAPE)		HUD.promptExit();
@@ -338,10 +336,7 @@ class PlayState extends FlxState
 	public function onLick(SnowRef:Snowflake, PlayerRef: Player):Void
 	{
 		SnowRef.onLick();
-
-		if (Playback.mode == "Repeat")
-			feedback.onLick(SnowRef);
-
+		feedback.onLick(SnowRef);
 		spawnRate -= SPAWNRATE_DECREMENTER;
 	}
 
@@ -349,32 +344,20 @@ class PlayState extends FlxState
 	// ADVANCED FEATURES /////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	private static function moreSnow():Void
-	{
-		if (spawnRate <= SHOWER)
-		{
-			spawnRate = BLIZZARD;
-			feedback.show("Blizzard");
-		}
-		else
-		{
-			spawnRate = SHOWER;
-			feedback.show("Shower");
-		}
+	private static function spellMode():Void {
+
+		inSpellMode = !inSpellMode;
+		var status:String = inSpellMode ? "Show" : "Hide";
+		feedback.show(status + " Notes");
 	}
 
-	private static function lessSnow():Void
+	private static function changeSnow():Void
 	{
-		if (spawnRate < SHOWER)
-		{
-			spawnRate = SHOWER;
-			feedback.show("Shower");
-		}
-		else
-		{
-			spawnRate = FLURRY;
-			feedback.show("Flurry");
-		}
+		var txt:String = "";
+
+		spawnRate = spawnRate == SHOWER ? BLIZZARD : spawnRate == BLIZZARD ? FLURRY : SHOWER;
+		txt = spawnRate == SHOWER ? "Shower" : spawnRate == BLIZZARD ? "Blizzard" : "Flurry";
+		feedback.show(txt);
 	}
 
 	private static function autoPilot():Void

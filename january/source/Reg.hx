@@ -15,10 +15,10 @@ using flixel.util.FlxArrayUtil;
 
 class Reg
 {
-	
+
 	public static var score:Int = 0;
-	
-	
+
+
 	public static inline var ACT_PLAYER_MOVE_L:Int 	= 	0;
 	public static inline var ACT_PLAYER_MOVE_R:Int 	= 	1;
 	public static inline var ACT_TONGUE_OUT:Int 	= 	2;
@@ -35,17 +35,17 @@ class Reg
 	public static inline var ACT_PENTATONICS:Int	= 	13;
 	public static inline var ACT_SPEEDUP:Int		= 	14;
 	public static inline var ACT_CHANGEKEY:Int		= 	15;
-	public static inline var ACT_SNOW_LESS:Int		= 	16;
-	public static inline var ACT_SNOW_MORE:Int		= 	17;
-	public static inline var ACT_NOTE_LENGTH:Int	= 	18;
+	public static inline var ACT_SNOW_FREQ:Int		= 	16;
+	public static inline var ACT_NOTE_LENGTH:Int	= 	17;
+	public static inline var ACT_NOTE_NAMES:Int		= 	18;
 	public static inline var ACT_SAVE:Int			= 	19;
-	public static inline var ACT_REVERSE:Int			= 	20;
+	public static inline var ACT_REVERSE:Int		= 	20;
 	public static inline var ACT_ANY:Int			= 	21;
-	
-	
+
+
 	#if !FLX_NO_KEYBOARD
 	public static var ActionsKeys:Array<Array<String>>;
-		
+
 	public static var KEY_DEFAULT_ANY:Array<String> 			= ["ANY"];
 	public static var KEY_DEFAULT_PLAYER_MOVE_L:Array<String> 	= ["LEFT", "A"];
 	public static var KEY_DEFAULT_PLAYER_MOVE_R:Array<String> 	= ["RIGHT", "D"];
@@ -63,15 +63,15 @@ class Reg
 	public static var KEY_DEFAULT_PENTATONICS:Array<String> 	= ["SLASH"];
 	public static var KEY_DEFAULT_SPEEDUP:Array<String> 		= ["CONTROL"];
 	public static var KEY_DEFAULT_CHANGEKEY:Array<String> 		= ["K"];
-	public static var KEY_DEFAULT_SNOW_LESS:Array<String> 		= ["MINUS"];
-	public static var KEY_DEFAULT_SNOW_MORE:Array<String> 		= ["PLUS"];
+	public static var KEY_DEFAULT_SNOW_FREQ:Array<String> 		= ["PLUS"];
 	public static var KEY_DEFAULT_NOTE_LENGTH:Array<String> 	= ["SHIFT"];
+	public static var KEY_DEFAULT_NOTE_NAMES:Array<String> 		= ["N"];
 	public static var KEY_DEFAULT_SAVE:Array<String>	 		= ["M"];
 	public static var KEY_DEFAULT_REVERSE:Array<String>	 		= ["ENTER"];
 	#end
 	#if !FLX_NO_GAMEPAD
 	public static var ActionsButtons:Array<Array<String>>;
-	
+
 	public static var BTN_DEFAULT_ANY:Array<String> 			= ["ANY"];
 	public static var BTN_DEFAULT_PLAYER_MOVE_L:Array<String> 	= ["LEFT_STICK_X_NEG"];
 	public static var BTN_DEFAULT_PLAYER_MOVE_R:Array<String> 	= ["LEFT_STICK_X_POS"];
@@ -83,26 +83,26 @@ class Reg
 	public static var BTN_DEFAULT_GAMEMODE_R:Array<String> 		= ["RIGHT_TRIGGER"];
 	public static var BTN_DEFAULT_MUSICMODE_L:Array<String> 	= ["LEFT_SHOULDER"];
 	public static var BTN_DEFAULT_MUSICMODE_R:Array<String> 	= ["RIGHT_SHOULDER"];
-	public static var BTN_DEFAULT_HUD:Array<String> 			= ["START"];
-	public static var BTN_DEFAULT_RESET:Array<String> 			= ["BACK"];
+	public static var BTN_DEFAULT_HUD:Array<String> 			= ["BACK"];
+	public static var BTN_DEFAULT_RESET:Array<String> 			= ["DPAD_LEFT"];
 	public static var BTN_DEFAULT_PEDALPOINT:Array<String> 		= ["A"];
 	public static var BTN_DEFAULT_PENTATONICS:Array<String> 	= ["B"];
 	public static var BTN_DEFAULT_SPEEDUP:Array<String> 		= ["X"];
-	public static var BTN_DEFAULT_CHANGEKEY:Array<String> 		= ["Y"];
-	public static var BTN_DEFAULT_SNOW_LESS:Array<String> 		= ["DPAD_UP"];
-	public static var BTN_DEFAULT_SNOW_MORE:Array<String> 		= ["DPAD_DOWN"];
-	public static var BTN_DEFAULT_NOTE_LENGTH:Array<String> 	= ["DPAD_LEFT", "DPAD_RIGHT"];
+	public static var BTN_DEFAULT_CHANGEKEY:Array<String> 		= ["START"];
+	public static var BTN_DEFAULT_SNOW_FREQ:Array<String> 		= ["DPAD_UP"];
+	public static var BTN_DEFAULT_NOTE_LENGTH:Array<String> 	= ["DPAD_DOWN"];
+	public static var BTN_DEFAULT_NOTE_NAMES:Array<String> 		= ["Y"];
 	public static var BTN_DEFAULT_SAVE:Array<String>	 		= ["GUIDE"];
 	public static var BTN_DEFAULT_REVERSE:Array<String>	 		= [];
-	
+
 	public static var wasLeftStickX:Int = 0;
 	public static var wasLeftStickY:Int = 0;
 	public static var wasRightStickX:Int = 0;
 	public static var wasRightStickY:Int = 0;
 	#end
-	
-	
-	
+
+
+
 	#if !FLX_NO_KEYBOARD
 	public static function changeKey(ActIndex:Int, ChangeTo:String):Void
 	{
@@ -116,7 +116,7 @@ class Reg
 		}
 	}
 	#end
-	
+
 	#if !FLX_NO_GAMEPAD
 	public static function stickCheck():Void
 	{
@@ -126,35 +126,35 @@ class Reg
 			wasLeftStickX = 1;
 		else
 			wasLeftStickX = 0;
-			
-		
+
+
 		if (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) < 0)
 			wasLeftStickY = -1;
 		else if (FlxG.gamepads.lastActive.getYAxis(LEFT_ANALOG_STICK) > 0)
 			wasLeftStickY = 1;
 		else
 			wasLeftStickY = 0;
-			
+
 		if (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) < 0)
 			wasRightStickX = -1;
 		else if (FlxG.gamepads.lastActive.getXAxis(RIGHT_ANALOG_STICK) > 0)
 			wasRightStickX = 1;
 		else
 			wasRightStickX = 0;
-			
-		
+
+
 		if (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) < 0)
 			wasRightStickY = -1;
 		else if (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) > 0)
 			wasRightStickY = 1;
 		else
 			wasRightStickY = 0;
-			
-		
+
+
 	}
-	
-	
-	
+
+
+
 	public static function changeButton(ActIndex:Int, ChangeTo:String):Void
 	{
 		ChangeTo = StringTools.trim(ChangeTo);
@@ -167,15 +167,15 @@ class Reg
 		}
 	}
 	#end
-	
+
 	public static function initControls():Void
 	{
 		// we need to do some complicated file reading and parsing things here
-		
+
 		#if !FLX_NO_KEYBOARD
 		ActionsKeys = [];
-		ActionsKeys.push(KEY_DEFAULT_PLAYER_MOVE_L); 
-		ActionsKeys.push(KEY_DEFAULT_PLAYER_MOVE_R); 
+		ActionsKeys.push(KEY_DEFAULT_PLAYER_MOVE_L);
+		ActionsKeys.push(KEY_DEFAULT_PLAYER_MOVE_R);
 		ActionsKeys.push(KEY_DEFAULT_TONGUE_OUT);
 		ActionsKeys.push(KEY_DEFAULT_TONGUE_IN);
 		ActionsKeys.push(KEY_DEFAULT_AUTOPILOT);
@@ -190,17 +190,17 @@ class Reg
 		ActionsKeys.push(KEY_DEFAULT_PENTATONICS);
 		ActionsKeys.push(KEY_DEFAULT_SPEEDUP);
 		ActionsKeys.push(KEY_DEFAULT_CHANGEKEY);
-		ActionsKeys.push(KEY_DEFAULT_SNOW_LESS);
-		ActionsKeys.push(KEY_DEFAULT_SNOW_MORE);
+		ActionsKeys.push(KEY_DEFAULT_SNOW_FREQ);
 		ActionsKeys.push(KEY_DEFAULT_NOTE_LENGTH);
+		ActionsKeys.push(KEY_DEFAULT_NOTE_NAMES);
 		ActionsKeys.push(KEY_DEFAULT_SAVE);
 		ActionsKeys.push(KEY_DEFAULT_REVERSE);
 		ActionsKeys.push(KEY_DEFAULT_ANY);
 		#end
 		#if !FLX_NO_GAMEPAD
 		ActionsButtons = [];
-		ActionsButtons.push(BTN_DEFAULT_PLAYER_MOVE_L); 
-		ActionsButtons.push(BTN_DEFAULT_PLAYER_MOVE_R); 
+		ActionsButtons.push(BTN_DEFAULT_PLAYER_MOVE_L);
+		ActionsButtons.push(BTN_DEFAULT_PLAYER_MOVE_R);
 		ActionsButtons.push(BTN_DEFAULT_TONGUE_OUT);
 		ActionsButtons.push(BTN_DEFAULT_TONGUE_IN);
 		ActionsButtons.push(BTN_DEFAULT_AUTOPILOT);
@@ -215,16 +215,16 @@ class Reg
 		ActionsButtons.push(BTN_DEFAULT_PENTATONICS);
 		ActionsButtons.push(BTN_DEFAULT_SPEEDUP);
 		ActionsButtons.push(BTN_DEFAULT_CHANGEKEY);
-		ActionsButtons.push(BTN_DEFAULT_SNOW_LESS);
-		ActionsButtons.push(BTN_DEFAULT_SNOW_MORE);
+		ActionsButtons.push(BTN_DEFAULT_SNOW_FREQ);
 		ActionsButtons.push(BTN_DEFAULT_NOTE_LENGTH);
+		ActionsButtons.push(BTN_DEFAULT_NOTE_NAMES);
 		ActionsButtons.push(BTN_DEFAULT_SAVE);
 		ActionsButtons.push(BTN_DEFAULT_REVERSE);
 		ActionsButtons.push(BTN_DEFAULT_ANY);
 		#end
-		
-		
-		
+
+
+
 		#if !flash
 		var strConfig:String = Assets.getText("config/Controls.cfg");
 		var match:EReg = ~/^([A-Z_]*)\s+=\s+([A-Z_,\s]*)$/gm;
@@ -232,9 +232,9 @@ class Reg
 			switch(r.matched(1))
 			{
 				#if !FLX_NO_KEYBOARD
-				case "KEY_PLAYER_MOVE_L": 
+				case "KEY_PLAYER_MOVE_L":
 					changeKey(ACT_PLAYER_MOVE_L, r.matched(2));
-				case "KEY_PLAYER_MOVE_R": 
+				case "KEY_PLAYER_MOVE_R":
 					changeKey(ACT_PLAYER_MOVE_R, r.matched(2));
 				case "KEY_TONGUE_OUT":
 					changeKey(ACT_TONGUE_OUT, r.matched(2));
@@ -264,21 +264,21 @@ class Reg
 					changeKey(ACT_SPEEDUP, r.matched(2));
 				case "KEY_CHANGEKEY":
 					changeKey(ACT_CHANGEKEY, r.matched(2));
-				case "KEY_SNOW_LESS":
-					changeKey(ACT_SNOW_LESS, r.matched(2));
-				case "KEY_SNOW_MORE":
-					changeKey(ACT_SNOW_MORE, r.matched(2));
+				case "KEY_SNOW_FREQ":
+					changeKey(ACT_SNOW_FREQ, r.matched(2));
 				case "KEY_NOTE_LENGTH":
 					changeKey(ACT_NOTE_LENGTH, r.matched(2));
+				case "KEY_NOTE_NAMES":
+					changeKey(ACT_NOTE_NAMES, r.matched(2));
 				case "KEY_SAVE":
 					changeKey(ACT_SAVE, r.matched(2));
 				case "KEY_REVERSE":
 					changeKey(ACT_REVERSE, r.matched(2));
 				#end
 				#if !FLX_NO_GAMEPAD
-				case "BTN_PLAYER_MOVE_L": 
+				case "BTN_PLAYER_MOVE_L":
 					changeButton(ACT_PLAYER_MOVE_L, r.matched(2));
-				case "BTN_PLAYER_MOVE_R": 
+				case "BTN_PLAYER_MOVE_R":
 					changeButton(ACT_PLAYER_MOVE_R, r.matched(2));
 				case "BTN_TONGUE_OUT":
 					changeButton(ACT_TONGUE_OUT, r.matched(2));
@@ -308,36 +308,30 @@ class Reg
 					changeButton(ACT_SPEEDUP, r.matched(2));
 				case "BTN_CHANGEKEY":
 					changeButton(ACT_CHANGEKEY, r.matched(2));
-				case "BTN_SNOW_LESS":
-					changeButton(ACT_SNOW_LESS, r.matched(2));
-				case "BTN_SNOW_MORE":
-					changeButton(ACT_SNOW_MORE, r.matched(2));
+				case "BTN_SNOW_FREQ":
+					changeButton(ACT_SNOW_FREQ, r.matched(2));
 				case "BTN_NOTE_LENGTH":
 					changeButton(ACT_NOTE_LENGTH, r.matched(2));
+				case "BTN_NOTE_NAMES":
+					changeButton(ACT_NOTE_NAMES, r.matched(2));
 				case "BTN_SAVE":
 					changeButton(ACT_SAVE, r.matched(2));
 				case "BTN_REVERSE":
 					changeButton(ACT_REVERSE, r.matched(2));
 				#end
 				default:
-					
+
 			}
 			return '';
 		});
-		
+
 		#end
-		
-		
-		
-		
-		
-		
 	}
-	
+
 	public static function inputPressed(Input:Int):Bool
 	{
 		var isPressed:Bool = false;
-		
+
 		#if !FLX_NO_KEYBOARD
 		for (s in ActionsKeys[Input])
 		{
@@ -346,7 +340,7 @@ class Reg
 			else
 				isPressed = isPressed || FlxG.keys.checkStatus(FlxKey.fromString(s), FlxInputState.PRESSED);
 		}
-		
+
 		#end
 		#if !FLX_NO_GAMEPAD
 		if (FlxG.gamepads.lastActive != null)
@@ -354,7 +348,7 @@ class Reg
 			var any:Bool = false;
 			for (s in ActionsButtons[Input])
 			{
-				switch (s) 
+				switch (s)
 				{
 					case "LEFT_STICK_X_NEG":
 						any = isPressed = isPressed || FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) < 0;
@@ -373,7 +367,7 @@ class Reg
 					case "RIGHT_STICK_Y_POS":
 						any = isPressed = isPressed || FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) > 0;
 					case "ANY":
-							
+
 					default:
 						isPressed = isPressed || FlxG.gamepads.lastActive.checkStatus(FlxGamepadInputID.fromString(s), FlxInputState.PRESSED);
 				}
@@ -383,13 +377,13 @@ class Reg
 		}
 		#end
 		return isPressed;
-		
+
 	}
-	
+
 	public static function inputJustPressed(Input:Int):Bool
 	{
 		var isPressed:Bool = false;
-		
+
 		#if !FLX_NO_KEYBOARD
 		for (s in ActionsKeys[Input])
 		{
@@ -405,7 +399,7 @@ class Reg
 			var any:Bool = false;
 			for (s in ActionsButtons[Input])
 			{
-				switch (s) 
+				switch (s)
 				{
 					case "LEFT_STICK_X_NEG":
 						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) < 0 && wasLeftStickX == 0);
@@ -424,22 +418,22 @@ class Reg
 					case "RIGHT_STICK_Y_POS":
 						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) > 0 && wasRightStickY == 0);
 					case "ANY":
-						
+
 					default:
 						isPressed = isPressed || FlxG.gamepads.lastActive.checkStatus(FlxGamepadInputID.fromString(s), FlxInputState.JUST_PRESSED);
-				}					
+				}
 				if (s == "ANY")
-					isPressed = isPressed || FlxG.gamepads.lastActive.justPressed.ANY || any;				
+					isPressed = isPressed || FlxG.gamepads.lastActive.justPressed.ANY || any;
 			}
 		}
 		#end
 		return isPressed;
 	}
-	
+
 	public static function inputJustReleased(Input:Int):Bool
 	{
 		var isPressed:Bool = false;
-		
+
 		#if !FLX_NO_KEYBOARD
 		for (s in ActionsKeys[Input])
 		{
@@ -448,7 +442,7 @@ class Reg
 			else
 				isPressed = isPressed || FlxG.keys.checkStatus(FlxKey.fromString(s), FlxInputState.JUST_RELEASED);
 		}
-		
+
 		#end
 		#if !FLX_NO_GAMEPAD
 		if (FlxG.gamepads.lastActive != null)
@@ -456,7 +450,7 @@ class Reg
 			var any:Bool = false;
 			for (s in ActionsButtons[Input])
 			{
-				switch (s) 
+				switch (s)
 				{
 					case "LEFT_STICK_X_NEG":
 						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getXAxis(LEFT_ANALOG_STICK) == 0 && wasLeftStickX < 0);
@@ -475,7 +469,7 @@ class Reg
 					case "RIGHT_STICK_Y_POS":
 						any = isPressed = isPressed || (FlxG.gamepads.lastActive.getYAxis(RIGHT_ANALOG_STICK) == 0 && wasRightStickY > 0);
 					case "ANY":
-						
+
 					default:
 						isPressed = isPressed || FlxG.gamepads.lastActive.checkStatus(FlxGamepadInputID.fromString(s), FlxInputState.JUST_RELEASED);
 				}
@@ -486,6 +480,6 @@ class Reg
 		#end
 		return isPressed;
 	}
-	
-	
+
+
 }

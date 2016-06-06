@@ -6,10 +6,7 @@ import music.Key;
 import music.Mode;
 import music.Note;
 
-class Transpose extends Snowflake
-{
-
-	//[Embed(source="../assets/art/flakes/transpose.png")] private var sprite : Class;
+class Transpose extends Snowflake {
 
 	public function new()
 	{
@@ -45,9 +42,7 @@ class Transpose extends Snowflake
 	private function fadeOutDissonance():Void
 	{
 		var sound:PlayState.SoundDef;
-		var g:UInt = 0;
-
-		var i:Map<String, String> = Intervals.loadout;
+		var newKey:Array<String> = Key.current == "C Major" ? Key.C_MAJOR : Key.C_MINOR;
 
 		// Run through all sounds.
 		for (sound in PlayState.sounds)
@@ -58,7 +53,7 @@ class Transpose extends Snowflake
 			if (sound.note != null && sound.note.active == true)
 			{
 				// Compare to current key notes.
-				for (note in i) {
+				for (note in newKey) {
 
 					if (sound.name == note || sound.name == "_" + note) {
 

@@ -38,7 +38,7 @@ class Mode
 		/* 19 six3 */	["one3", "fiv3", "sev3", "one4"],
 		/* 20 sev3 */	["fiv3", "one4"],
 		/* 21 one4 */	["one2", "thr3", "for3", "fiv3", "sev3", "one3"],
-		/* 22 else */	["one2", "one3"] ], 
+		/* 22 else */	["one2", "one3"] ],
 		chords: [	["one1", "thr1", "fiv1"], ["one1", "thr1", "sev1"], ["one1", "fiv1", "one2"], ["one1", "fiv1", "thr2"],
 						["one1", "fiv1", "fiv2"], ["one1", "thr2", "sev2"], ["thr1", "one2", "fiv2"], ["thr1", "fiv1", "one2"],
 						["fiv1", "one2", "thr2"], ["one2", "two2", "sev2"], ["one1", "two2", "sev2"], ["one1", "fiv1", "thr2", "sev2"] ]};
@@ -60,7 +60,7 @@ class Mode
 		/* 14 one3 */	["one1", "fiv1", "six1", "one2", "thr2", "fiv2", "six2", "sev2", "two3", "thr3", "fiv3", "one4"],
 		/* 15 two3 */	["two2", "fiv2", "one3", "thr3", "fiv3", "sev3"],
 		/* 16 thr3 */	["thr2", "fiv2", "six2", "sev2", "one3", "two3", "for3", "fiv3", "six3", "sev3", "one4"],
-		/* 17 for3 */	["six2", "thr3", "fiv3", "six3", "sev3"],	
+		/* 17 for3 */	["six2", "thr3", "fiv3", "six3", "sev3"],
 		/* 18 fiv3 */	["thr2", "fiv2", "six2", "sev2", "one3", "two3", "thr3", "for3", "six3", "sev3", "one4"],
 		/* 19 six3 */	["for2", "six2", "for3", "fiv3", "sev3", "one4"],
 		/* 20 sev3 */	["sev2", "thr3", "fiv3", "six3", "one4"],
@@ -88,7 +88,7 @@ class Mode
 		/* 14 one3 */	["one2", "two3", "thr3", "fiv3", "thr2", "for2", "sev2", "six2"],
 		/* 15 two3 */	["one3", "thr3", "fiv3", "sev3"],
 		/* 16 thr3 */	["fiv2", "two3", "for3", "fiv3", "sev3", "one3"],
-		/* 17 for3 */	["thr3", "fiv3", "six2"],	
+		/* 17 for3 */	["thr3", "fiv3", "six2"],
 		/* 18 fiv3 */	["one3", "thr3", "for3", "six3", "sev3", "one4"],
 		/* 19 six3 */	["one3", "fiv3", "sev3", "one4"],
 		/* 20 sev3 */	["fiv3", "one4"],
@@ -117,7 +117,7 @@ class Mode
 		/* 14 one3 */	["one2", "two3", "thr3", "fiv3", "thr2", "for2", "sev2", "six2"],
 		/* 15 two3 */	["one3", "thr3", "fiv3", "sev3"],
 		/* 16 thr3 */	["thr2", "fiv2", "six2", "sev2", "two3", "for3", "fiv3", "sev3", "one3"],
-		/* 17 for3 */	["thr3", "fiv3", "sev3", "six2", "sev2"],	
+		/* 17 for3 */	["thr3", "fiv3", "sev3", "six2", "sev2"],
 		/* 18 fiv3 */	["one3", "thr3", "for3", "six3", "sev3", "one4"],
 		/* 19 six3 */	["one3", "fiv3", "sev3"],
 		/* 20 sev3 */	["two3", "sev2", "fiv3", "one4"],
@@ -145,7 +145,7 @@ class Mode
 		/* 14 one3 */	["one1", "for1", "fiv1", "six1", "one2", "thr2", "fiv2", "six2", "sev2", "two3", "thr3", "for3", "fiv3", "six3", "one4"],
 		/* 15 two3 */	["two2", "fiv2", "sev2", "one3", "thr3", "fiv3", "sev3"],
 		/* 16 thr3 */	["fiv2", "six2", "sev2", "one3", "two3", "for3", "fiv3", "six3", "sev3", "one4"],
-		/* 17 for3 */	["six2", "thr3", "fiv3", "six3", "sev3"],	
+		/* 17 for3 */	["six2", "thr3", "fiv3", "six3", "sev3"],
 		/* 18 fiv3 */	["thr2", "fiv2", "six2", "sev2", "one3", "two3", "thr3", "for3", "six3", "sev3", "one4"],
 		/* 19 six3 */	["for2", "for3", "fiv3", "sev3", "one4"],
 		/* 20 sev3 */	["sev2", "fiv3", "six3", "one4"],
@@ -155,8 +155,8 @@ class Mode
 						["one1", "fiv1", "fiv2"], ["one1", "thr2", "sev2"], ["thr1", "one2", "fiv2"], ["thr1", "fiv1", "one2"],
 						["fiv1", "one2", "thr2"], ["one1", "fiv1", "thr2", "sev2"] ]
 	};
-	
-			
+
+
 	/** Array of all the modes. */
 	public static var	DATABASE: Array<ModeDef> /* of Object */ = [IONIAN, DORIAN, LYDIAN, MIXOLYDIAN, AEOLIAN];
 	/** Number used with mode array to select and identify the current mode. */
@@ -165,49 +165,50 @@ class Mode
 	public static var current: ModeDef;
 	/** The previous mode. */
 	public static var previous: ModeDef;
-	
+
 	public static function change(modeIndex: Int = -1):Void
 	{
 		if (modeIndex == -1)
-		{			
-			var newIndex:Int = FlxG.random.int(0, DATABASE.length - 1);		
-			
+		{
+			var newIndex:Int = FlxG.random.int(0, DATABASE.length - 1);
+
 			// Halve Probability of Mixolydian
 			if (newIndex == 3)
 				newIndex = FlxG.random.int(0, DATABASE.length - 1);
-			
+
 			while (newIndex == index)
-				newIndex = FlxG.random.int(0, DATABASE.length - 1);	
+				newIndex = FlxG.random.int(0, DATABASE.length - 1);
 			index = newIndex;
 		}
 		else
 			index = modeIndex;
-		
+
 		init();
 	}
-	
+
 	public static function cycle(direction: String = "Left"):Void
 	{
+
 		if (direction == "Left")
 		{
 			index--;
 			if (index < 0)
 				index = DATABASE.length - 1;
-			
+
 			init();
-			PlayState.feedback.show(HUD.modeName);
-		}			
+			PlayState.txtScales.show(HUD.modeName);
+		}
 		if (direction == "Right")
 		{
 			index++;
 			if (index > DATABASE.length - 1)
 				index = 0;
-			
+
 			init();
-			PlayState.feedback.show(HUD.modeName);
+			PlayState.txtScales.show(HUD.modeName);
 		}
 	}
-	
+
 	public static function init():Void
 	{
 		previous = current;
@@ -216,5 +217,5 @@ class Mode
 		Intervals.populate();
 		HUD.logMode();
 	}
-	
+
 }

@@ -18,7 +18,6 @@ class Reg
 
 	public static var score:Int = 0;
 
-
 	public static inline var ACT_PLAYER_MOVE_L:Int 	= 	0;
 	public static inline var ACT_PLAYER_MOVE_R:Int 	= 	1;
 	public static inline var ACT_TONGUE_OUT:Int 	= 	2;
@@ -69,6 +68,7 @@ class Reg
 	public static var KEY_DEFAULT_SAVE:Array<String>	 		= ["M"];
 	public static var KEY_DEFAULT_REVERSE:Array<String>	 		= ["ENTER"];
 	#end
+
 	#if !FLX_NO_GAMEPAD
 	public static var ActionsButtons:Array<Array<String>>;
 
@@ -152,10 +152,7 @@ class Reg
 		else
 			wasRightStickY = 0;
 
-
 	}
-
-
 
 	public static function changeButton(ActIndex:Int, ChangeTo:String):Void
 	{

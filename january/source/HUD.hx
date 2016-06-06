@@ -15,7 +15,6 @@ import openfl.events.MouseEvent;
 
 class HUD
 {
-
 	/** The text sprite that holds note name, volume, pan, etc. */
 	public static var row1:FlxText;
 	/** The text sprite that holds mode type, chord tones, etc. */
@@ -29,8 +28,6 @@ class HUD
 
 	/** The "Save as MIDI" button. */
 	public static var midiButton:Button;
-	/** The font used for HUD objects. */
-	//public static inline var FONT:String = "frucade";
 	/** Regular Expression used to find "s" for sharp. */
 	private static var findSharp:EReg = ~/\s*[s]/g;
 
@@ -63,32 +60,28 @@ class HUD
 		promptBack.screenCenter();
 		promptBack.scrollFactor.x = 0;
 		promptBack.exists = false;
-
-
-
 	}
 
 	/** Turns HUD on or off. */
-	public static function toggle():Void
-	{
+	public static function toggle():Void {
+
 		row1.exists = row2.exists = row3.exists = !row3.exists;
 	}
 
-	public static function midi():Void
-	{
-		//FlxG.stage.displayState = StageDisplayState.NORMAL;
+	public static function midi():Void {
 
 		#if !FLX_NO_MOUSE
-		if (FlxG.mouse.visible)
-		{
-			FlxG.mouse.visible = false;
-			FlxG.stage.removeEventListener(MouseEvent.MOUSE_DOWN, MIDI.generate);
-		}
-		else
-		{
-			FlxG.mouse.visible = true;
-			FlxG.stage.addEventListener(MouseEvent.MOUSE_DOWN, MIDI.generate);
-		}
+
+			if (FlxG.mouse.visible) {
+
+				FlxG.mouse.visible = false;
+				FlxG.stage.removeEventListener(MouseEvent.MOUSE_DOWN, MIDI.generate);
+			}
+			else {
+
+				FlxG.mouse.visible = true;
+				FlxG.stage.addEventListener(MouseEvent.MOUSE_DOWN, MIDI.generate);
+			}
 		#end
 
 		midiButton.exists = !midiButton.exists;
@@ -100,8 +93,8 @@ class HUD
 	 * @param volume	Volume of note to be logged.
 	 * @param pan		Pan position of note to be logged.
 	 */
-	public static function logNote(volume:Float, pan:Float):Void
-	{
+	public static function logNote(volume:Float, pan:Float):Void {
+
 		row1.text = "";
 
 		// Log note name, volume and pan to HUD
@@ -109,13 +102,15 @@ class HUD
 		var loggedVolume: String = Std.string(Std.int( (volume * 100) * (1 / Note.MAX_VOLUME))) + "%";
 		var loggedPan: String = Std.string(Std.int(pan * 100));
 
-		if (loggedPan.indexOf("-") != -1)
-		{
+		if (loggedPan.indexOf("-") != -1) {
+
 			loggedPan = loggedPan.substring(1);
 			loggedPan = loggedPan + "% L";
 		}
-		else if (loggedPan != "0")
+		else if (loggedPan != "0") {
+
 			loggedPan = loggedPan + "% R";
+		}
 
 		noteText = loggedNote + ", in ";
 		row1.text = noteText + modeName + ".";
@@ -128,35 +123,36 @@ class HUD
 	 * @param currentMode	The current mode.
 	 * @param chordTones	If a chord was just played, passes through the chord tones.
 	 */
-	public static function logMode():Void
-	{
+	public static function logMode():Void {
+
 		var keyLetter:String = enharmonic(Intervals.loadout.get("one1"));
 
-		if (Scale.isPentatonic)
-		{
+		if (Scale.isPentatonic) {
+
 			if (Mode.current == Mode.AEOLIAN || Mode.current == Mode.DORIAN)
 				modeName = "Minor";
 			else
 				modeName = "Major";
 
 			modeName = keyLetter + " " + modeName + " Pentatonic";
-		}
-		else
+
+		} else {
+
 			modeName = keyLetter + " " + Mode.current.name;
+		}
 
 		row1.text = noteText + modeName + ".";
 	}
 
 	/** Logs Key Data to HUD. */
-	public static function logEvent(chordTones:Array<String> = null):Void
-	{
-		//FlxG.log("logEvent()");
+	public static function logEvent(chordTones:Array<String> = null):Void {
 
-		if (chordTones != null)
-		{
+		if (chordTones != null) {
+
 			var chordName:String = "";
-			for (i in 0...chordTones.length)
-			{
+
+			for (i in 0...chordTones.length) {
+
 				var actualName: String = enharmonic(chordTones[i]);
 				chordName += actualName + " ";
 			}
@@ -165,8 +161,8 @@ class HUD
 		}
 	}
 
-	public static function enharmonic(text:String, octave:Bool = false):String
-	{
+	public static function enharmonic(text:String, octave:Bool = false):String {
+
 		var oct:String = text.charAt(text.length - 1);
 		text = text.substr(0, text.length - 1);
 
@@ -174,10 +170,10 @@ class HUD
 
 			text = findSharp.replace(text, "");
 
-			for (i in 0...Key.LETTERS.length)
-			{
-				if (text == Key.LETTERS[i])
-				{
+			for (i in 0...Key.LETTERS.length) {
+
+				if (text == Key.LETTERS[i]) {
+
 					text = Key.LETTERS[i+1];
 					break;
 				}
@@ -191,18 +187,18 @@ class HUD
 		return text;
 	}
 
-	private static function hide():Void
-	{
+	private static function hide():Void {
+
 		row1.exists = row2.exists = row3.exists = false;
 	}
 
-	public static function promptExit():Void
-	{
+	public static function promptExit():Void {
+
 		promptBack.exists = promptText.exists = true;
 	}
 
-	public static function hideExit():Void
-	{
+	public static function hideExit():Void {
+
 		promptBack.exists = promptText.exists = false;
 	}
 }

@@ -16,7 +16,7 @@ class Key
 	public static var current		: String = DATABASE[index][0];
 	/** Whether or not the key has been just changed. */
 	public static var justChanged	: Bool;
-	
+
 	/** Array of all possible key letters. */
 	public static var LETTERS: Array<String> = ["C", "D", "E", "F", "G", "A", "B", "C"];
 
@@ -24,18 +24,18 @@ class Key
 	{
 		var newIndex:Int = FlxG.random.int(0, DATABASE.length - 1);
 		while (newIndex == index)
-			newIndex = FlxG.random.int(0, DATABASE.length - 1);			
+			newIndex = FlxG.random.int(0, DATABASE.length - 1);
 		index = newIndex;
 		current = DATABASE[index][0];
 		Intervals.updated = false;
 		Intervals.populate();
-		
+
 		// Prevent tensions on playback mode key changes.
 		if (Playback.mode == "Repeat")
 		{
 			var currentInterval:String = Playback.sequence[Playback.index];
 			var avoidIntervals: Array<String> = ["two1", "for1", "six1", "for2", "six2", "for3", "six3"];
-			
+
 			for (intervalToAvoid in avoidIntervals)
 			{
 				if (currentInterval == intervalToAvoid)
@@ -52,15 +52,15 @@ class Key
 				}
 			}
 		}
-		
+
 		justChanged = true;
-		
+
 		HUD.logMode();
 	}
-	
+
 	public static function cycle():Void
-	{	
+	{
 		change();
-		PlayState.feedback.show(HUD.modeName);
+		PlayState.txtScales.show(HUD.modeName);
 	}
 }

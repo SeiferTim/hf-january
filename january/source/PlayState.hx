@@ -388,7 +388,8 @@ class PlayState extends FlxState
 		}
 
 		#if !FLX_NO_GAMEPAD
-		Reg.stickCheck();
+		if(FlxG.gamepads.lastActive != null)
+			Reg.stickCheck();
 		#end
 	}
 

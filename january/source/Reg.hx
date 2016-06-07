@@ -29,17 +29,18 @@ class Reg
 	public static inline var ACT_MUSICMODE_L:Int	= 	8;
 	public static inline var ACT_MUSICMODE_R:Int	= 	9;
 	public static inline var ACT_HUD:Int			= 	10;
-	public static inline var ACT_RESET:Int			= 	11;
-	public static inline var ACT_PEDALPOINT:Int		= 	12;
-	public static inline var ACT_PENTATONICS:Int	= 	13;
-	public static inline var ACT_SPEEDUP:Int		= 	14;
-	public static inline var ACT_CHANGEKEY:Int		= 	15;
-	public static inline var ACT_SNOW_FREQ:Int		= 	16;
-	public static inline var ACT_NOTE_LENGTH:Int	= 	17;
-	public static inline var ACT_NOTE_NAMES:Int		= 	18;
-	public static inline var ACT_SAVE:Int			= 	19;
-	public static inline var ACT_REVERSE:Int		= 	20;
-	public static inline var ACT_ANY:Int			= 	21;
+	public static inline var ACT_ATTACK_TIME:Int	= 	11;
+	public static inline var ACT_RESET:Int			= 	12;
+	public static inline var ACT_PEDALPOINT:Int		= 	13;
+	public static inline var ACT_PENTATONICS:Int	= 	14;
+	public static inline var ACT_SPEEDUP:Int		= 	15;
+	public static inline var ACT_CHANGEKEY:Int		= 	16;
+	public static inline var ACT_SNOW_FREQ:Int		= 	17;
+	public static inline var ACT_NOTE_LENGTH:Int	= 	18;
+	public static inline var ACT_NOTE_NAMES:Int		= 	19;
+	public static inline var ACT_SAVE:Int			= 	20;
+	public static inline var ACT_REVERSE:Int		= 	21;
+	public static inline var ACT_ANY:Int			= 	22;
 
 
 	#if !FLX_NO_KEYBOARD
@@ -57,6 +58,7 @@ class Reg
 	public static var KEY_DEFAULT_MUSICMODE_L:Array<String> 	= ["COMMA"];
 	public static var KEY_DEFAULT_MUSICMODE_R:Array<String> 	= ["PERIOD"];
 	public static var KEY_DEFAULT_HUD:Array<String> 			= ["H"];
+	public static var KEY_DEFAULT_ATTACK_TIME:Array<String>		= ["T"];
 	public static var KEY_DEFAULT_RESET:Array<String> 			= ["BACKSLASH"];
 	public static var KEY_DEFAULT_PEDALPOINT:Array<String> 		= ["P"];
 	public static var KEY_DEFAULT_PENTATONICS:Array<String> 	= ["SLASH"];
@@ -83,17 +85,18 @@ class Reg
 	public static var BTN_DEFAULT_GAMEMODE_R:Array<String> 		= ["RIGHT_TRIGGER"];
 	public static var BTN_DEFAULT_MUSICMODE_L:Array<String> 	= ["LEFT_SHOULDER"];
 	public static var BTN_DEFAULT_MUSICMODE_R:Array<String> 	= ["RIGHT_SHOULDER"];
-	public static var BTN_DEFAULT_HUD:Array<String> 			= ["BACK"];
+	public static var BTN_DEFAULT_HUD:Array<String> 			= [];
+	public static var BTN_DEFAULT_ATTACK_TIME:Array<String> 	= ["DPAD_UP"];
 	public static var BTN_DEFAULT_RESET:Array<String> 			= ["DPAD_LEFT"];
 	public static var BTN_DEFAULT_PEDALPOINT:Array<String> 		= ["A"];
 	public static var BTN_DEFAULT_PENTATONICS:Array<String> 	= ["B"];
 	public static var BTN_DEFAULT_SPEEDUP:Array<String> 		= ["X"];
 	public static var BTN_DEFAULT_CHANGEKEY:Array<String> 		= ["START"];
-	public static var BTN_DEFAULT_SNOW_FREQ:Array<String> 		= ["DPAD_UP"];
+	public static var BTN_DEFAULT_SNOW_FREQ:Array<String> 		= ["Y"];
 	public static var BTN_DEFAULT_NOTE_LENGTH:Array<String> 	= ["DPAD_DOWN"];
-	public static var BTN_DEFAULT_NOTE_NAMES:Array<String> 		= ["Y"];
+	public static var BTN_DEFAULT_NOTE_NAMES:Array<String> 		= ["BACK"];
 	public static var BTN_DEFAULT_SAVE:Array<String>	 		= ["GUIDE"];
-	public static var BTN_DEFAULT_REVERSE:Array<String>	 		= [];
+	public static var BTN_DEFAULT_REVERSE:Array<String>	 		= ["DPAD_RIGHT"];
 
 	public static var wasLeftStickX:Int = 0;
 	public static var wasLeftStickY:Int = 0;
@@ -184,6 +187,7 @@ class Reg
 		ActionsKeys.push(KEY_DEFAULT_MUSICMODE_L);
 		ActionsKeys.push(KEY_DEFAULT_MUSICMODE_R);
 		ActionsKeys.push(KEY_DEFAULT_HUD);
+		ActionsKeys.push(KEY_DEFAULT_ATTACK_TIME);
 		ActionsKeys.push(KEY_DEFAULT_RESET);
 		ActionsKeys.push(KEY_DEFAULT_PEDALPOINT);
 		ActionsKeys.push(KEY_DEFAULT_PENTATONICS);
@@ -209,6 +213,7 @@ class Reg
 		ActionsButtons.push(BTN_DEFAULT_MUSICMODE_L);
 		ActionsButtons.push(BTN_DEFAULT_MUSICMODE_R);
 		ActionsButtons.push(BTN_DEFAULT_HUD);
+		ActionsButtons.push(BTN_DEFAULT_ATTACK_TIME);
 		ActionsButtons.push(BTN_DEFAULT_RESET);
 		ActionsButtons.push(BTN_DEFAULT_PEDALPOINT);
 		ActionsButtons.push(BTN_DEFAULT_PENTATONICS);
@@ -253,6 +258,8 @@ class Reg
 					changeKey(ACT_MUSICMODE_R, r.matched(2));
 				case "KEY_HUD":
 					changeKey(ACT_HUD, r.matched(2));
+				case "KEY_ATTACK_TIME":
+					changeKey(ACT_ATTACK_TIME, r.matched(2));
 				case "KEY_RESET":
 					changeKey(ACT_RESET, r.matched(2));
 				case "KEY_PEDALPOINT":
@@ -297,6 +304,8 @@ class Reg
 					changeButton(ACT_MUSICMODE_R, r.matched(2));
 				case "BTN_HUD":
 					changeButton(ACT_HUD, r.matched(2));
+				case "BTN_ATTACK_TIME":
+					changeButton(ACT_ATTACK_TIME, r.matched(2));
 				case "BTN_RESET":
 					changeButton(ACT_RESET, r.matched(2));
 				case "BTN_PEDALPOINT":

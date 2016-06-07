@@ -58,7 +58,7 @@ class Octave extends Snowflake {
 			var modifiedNote:String = "_" + octaveTone;
 			octave = PlayState.loadSound(modifiedNote, Octave.VOLUME / SnowflakeManager._volumeMod, -1 * pan);
 		}
-		PlayState.flamNotes.push({name: octave.name, note: octave.note});
+		PlayState.flamNotes.push(octave);
 		PlayState.flamTimer = PlayState.flamRate / 1000;
 
 		setFadeAmt(octave.note);

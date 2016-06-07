@@ -5,15 +5,14 @@ import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.util.FlxDestroyUtil;
 
-class MenuState extends FlxState
-{
+class MenuState extends FlxState {
 
 	private static var yesText:FlxText;
 	private static var leaving:Bool = false;
 
 	override public function create():Void
 	{
-		bgColor = 0xFF75899C;
+		bgColor = 0xFF000000; //0xFF75899C;
 
 		#if !FLX_NO_MOUSE
 		FlxG.mouse.load(AssetPaths.cursor__png, 3);
@@ -31,11 +30,13 @@ class MenuState extends FlxState
 		super.create();
 	}
 
-	private function newState():Void
-	{
+	private function newState():Void {
+
 		if (leaving)
 			return;
+
 		leaving = true;
+
 		#if !FLX_NO_MOUSE
 		FlxG.mouse.visible = false;
 		#end
@@ -43,15 +44,14 @@ class MenuState extends FlxState
 		FlxG.switchState(new PlayState());
 	}
 
-	override public function destroy():Void
-	{
+	override public function destroy():Void {
+
 		yesText = FlxDestroyUtil.destroy(yesText);
 		super.destroy();
 	}
 
 
-	override public function update(elapsed:Float):Void
-	{
+	override public function update(elapsed:Float):Void {
 
 		if (Reg.inputJustReleased(Reg.ACT_ANY))
 			newState();

@@ -13,8 +13,14 @@ class Playback
 	public static var index:Int = 0;
 	/** Whether or not Playback mode is in reverse. */
 	public static var reverse:Bool;
-	/** The state of changeNoteLengths mode. */
-	public static var noteLength:Int = 0;
+	/** The ID for current Note Length. */
+	public static var noteLengthID:Int = 0;
+	/** The ID for current Attack Time. */
+	public static var attackTimeID:Int = 0;
+	/** The current attackTime amount. */
+	public static var attackTime:Float = 0;
+	/** The attackTime lengths. */
+	public static var attackTimes:Array<Float> = [0, 0.5, 1, 2];
 	/** Cycle through the playback modes. */
 	public static function cycle(direction:String = "Left"):Void
 	{
@@ -104,11 +110,23 @@ class Playback
 		}
 	}
 
-	public static function changeNoteLengths():Void
-	{
-		var options:Array<String> = ["Random", "Short", "Medium", "Long"];
-		noteLength = (noteLength + 1) % options.length;
-		PlayState.txtOptions.show("Note Length: " + options[noteLength]);
+	public static function changeNoteLengths():Void {
+
+		var options:Array<String> = ["Random", "Short", "Medium", "Full"];
+		noteLengthID = (noteLengthID + 1) % options.length;
+		PlayState.txtOptions.show("Note Length: " + options[noteLengthID]);
+	}
+
+	public static function changeAttackTimes():Void {
+
+		var options:Array<String> = ["Fast", "Medium", "Slow", "Molasses"];
+		attackTimeID = (attackTimeID + 1) % options.length;
+		PlayState.txtOptions.show("Attack Time: " + options[attackTimeID]);
+
+		if (attackTimeID != 0)
+			noteLengthID = 3;
+
+		attackTime = attackTimes[attackTimeID];
 	}
 
 }

@@ -28,19 +28,18 @@ class Transpose extends Snowflake {
 		Mode.change();
 		Key.change();
 		fadeOutDissonance();
-		//playNote();
 		playChord();
 	}
 
-	public override function update(elapsed:Float):Void
-	{
-		super.update(elapsed);
+	public override function update(elapsed:Float):Void {
 
+		super.update(elapsed);
 		animation.play("default");
 	}
 
-	private function fadeOutDissonance():Void
-	{
+	// THIS DOESN'T PLAY NICE WITH SHORTENED NOTES (aka notes that are already fading)
+	private function fadeOutDissonance():Void {
+
 		var sound:PlayState.SoundDef;
 		var newKey:Array<String> = Key.current == "C Major" ? Key.C_MAJOR : Key.C_MINOR;
 
@@ -66,7 +65,10 @@ class Transpose extends Snowflake {
 					continue;
 
 				// If a note made it this far, it's not in the current key, so fade it out.
-				sound.note.fadeOut(0.2);
+				if (sound.note.tweening)
+					sound.note.tween.cancel();
+
+				sound.note.fadeO(0.2);
 			}
 		}
 	}

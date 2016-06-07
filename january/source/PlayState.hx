@@ -1,6 +1,5 @@
 package;
 
-
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -20,13 +19,16 @@ import music.Note;
 import music.Pedal;
 import music.Playback;
 import music.Scale;
+import music.Tone;
 import openfl.Assets;
 import openfl.utils.Object;
 
 
 typedef SoundDef = {
 	name:String,
-	note:FlxSound
+	note:Tone,
+	toFadeIn:Bool,
+	vol:Float
 }
 
 class PlayState extends FlxState
@@ -170,12 +172,39 @@ class PlayState extends FlxState
 		FlxG.watch.add(Reg, "wasRightStickY");
 	}
 
+	static public function loadSound(Sound:String, Volume:Float, Pan:Float):SoundDef
+	{
+		if (StringTools.endsWith(Sound, "null"))
+			return null;
+
+		var note:Tone = new Tone();
+		note.loadEmbedded(Assets.getSound(getFilename(Sound)), false);
+		note.pan = Pan;
+
+		var toFadeIn:Bool = false;
+
+		if (Playback.attackTimeID > 0) {
+
+			toFadeIn = true;
+			note.volume = 0;
+		}
+		else
+			note.volume = Volume;
+
+		var s:SoundDef = {name: Sound, note: note, toFadeIn: toFadeIn, vol: Volume};
+		sounds.push(s);
+		return s;
+	}
+
 	static public function playSound(Sound:String, Volume:Float, Pan:Float):SoundDef
 	{
-		var note:FlxSound = FlxG.sound.play(Assets.getSound(getFilename(Sound)), Volume, false);
-		note.pan = Pan;
-		var s:SoundDef = {name: Sound, note: note };
-		sounds.push({name: Sound, note: note });
+		var s:SoundDef = loadSound(Sound, Volume, Pan);
+
+		if (s.toFadeIn)
+			s.note.fadeI(Playback.attackTime, Volume);
+		else
+			s.note.play();
+
 		return s;
 	}
 
@@ -190,17 +219,6 @@ class PlayState extends FlxState
 		return filename;
 	}
 
-	static public function loadSound(Sound:String, Volume:Float, Pan:Float):SoundDef
-	{
-		if (StringTools.endsWith(Sound, "null"))
-			return null;
-		var note:FlxSound = FlxG.sound.load(Assets.getSound(getFilename(Sound)), Volume, false);
-		note.pan = Pan;
-		var s:SoundDef = {name: Sound, note: note };
-		sounds.push({name: Sound, note: note });
-		return s;
-	}
-
 	/** Called every frame. */
 	override public function update(elapsed:Float):Void
 	{
@@ -212,7 +230,10 @@ class PlayState extends FlxState
 			{
 				var flamNote:SoundDef = flamNotes[flamCounter];
 
-				flamNote.note.play();
+				if (flamNote.toFadeIn)
+					flamNote.note.fadeI(Playback.attackTime, flamNote.vol);
+				else
+					flamNote.note.play();
 
 				var classToLog:String = "";
 				var volToLog:Float = 0;
@@ -272,6 +293,8 @@ class PlayState extends FlxState
 				if (FlxG.random.bool(0.4)) Scale.togglePentatonics();
 				// Toggle Note Lengths
 				if (FlxG.random.bool(0.4)) Playback.changeNoteLengths();
+				// Toggle Attack Times
+				if (FlxG.random.bool(0.4)) Playback.changeAttackTimes();
 
 				// Toggle Pedal Point
 				if (Pedal.mode == false && FlxG.random.bool(0.2))
@@ -340,6 +363,7 @@ class PlayState extends FlxState
 			if (Reg.inputJustPressed(Reg.ACT_RESET))				Playback.resetRestart();
 
 			if (Reg.inputJustPressed(Reg.ACT_NOTE_LENGTH))			Playback.changeNoteLengths();
+			if (Reg.inputJustPressed(Reg.ACT_ATTACK_TIME))			Playback.changeAttackTimes();
 			if (Reg.inputJustPressed(Reg.ACT_NOTE_NAMES))			spellMode();
 			if (Reg.inputJustPressed(Reg.ACT_IMPROV))				improvise();
 			if (Reg.inputJustPressed(Reg.ACT_AUTOPILOT))			autoPilot();

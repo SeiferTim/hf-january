@@ -81,7 +81,7 @@ class Harmony extends Snowflake {
 
 		}
 
-		PlayState.flamNotes.push({name: harmony.name, note: harmony.note});
+		PlayState.flamNotes.push(harmony);
 		PlayState.flamTimer = PlayState.flamRate / 1000;
 
 		setFadeAmt(harmony.note);

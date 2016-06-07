@@ -6,10 +6,7 @@ import music.Note;
 import openfl.utils.Object;
 
 
-class Harmony extends Snowflake
-{
-
-	//[Embed(source="../assets/art/flakes/harmony.png")] private var sprite: Class;
+class Harmony extends Snowflake {
 
 	/** Default volume level for the harmony tone (not the default note). */
 	public static var VOLUME:Float = Note.MAX_VOLUME * 0.33;
@@ -84,10 +81,10 @@ class Harmony extends Snowflake
 
 		}
 
-		PlayState.flamNotes.push({name: harmony.name, note: harmony.note});
+		PlayState.flamNotes.push(harmony);
 		PlayState.flamTimer = PlayState.flamRate / 1000;
 
-		inStaccato(harmony.note);
+		setFadeAmt(harmony.note);
 
 		// LOGS
 		Note.lastHarmony = harmonyTone;

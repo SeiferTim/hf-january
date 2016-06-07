@@ -53,24 +53,19 @@ class Scale
 		/* 14 one3 */	["one1", "for1", "fiv1", "one2", "thr2", "fiv2", "sev2", "thr3", "for3", "fiv3", "one4"],
 						["one1", "one2", "one3"],
 		/* 16 thr3 */	["thr2", "fiv2", "sev2", "one3", "for3", "fiv3", "sev3"],
-		/* 17 for3 */	["one3", "thr3", "fiv3"],	
+		/* 17 for3 */	["one3", "thr3", "fiv3"],
 		/* 18 fiv3 */	["thr2", "fiv2", "sev2", "one3", "thr3", "for3", "sev3", "one4"],
 						["one1", "one2", "one3"],
 		/* 20 sev3 */	["fiv3", "one4"],
 		/* 21 one4 */	["one3", "thr3", "for3", "fiv3", "sev3"],
 		/* 22 else */	["one1", "one2", "one3"] ]};
 	public static var isPentatonic:Bool;
-	
-	public static function toPentatonic():Void
-	{
+
+	public static function togglePentatonics():Void {
+
 		isPentatonic = !isPentatonic;
-		
-		if (isPentatonic)
-			PlayState.feedback.show("Pentatonics On");
-		else
-			PlayState.feedback.show("Pentatonics Off");
-		
+		PlayState.txtOptions.show("Pentatonics " + (isPentatonic ? "On" : "Off"));
 		HUD.logMode();
 	}
-	
+
 }

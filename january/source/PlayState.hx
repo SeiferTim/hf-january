@@ -1,6 +1,5 @@
 package;
 
-
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -20,13 +19,16 @@ import music.Note;
 import music.Pedal;
 import music.Playback;
 import music.Scale;
+import music.Tone;
 import openfl.Assets;
 import openfl.utils.Object;
 
 
 typedef SoundDef = {
 	name:String,
-	note:FlxSound
+	note:Tone,
+	toFadeIn:Bool,
+	vol:Float
 }
 
 class PlayState extends FlxState
@@ -56,7 +58,10 @@ class PlayState extends FlxState
 	public static var snow:FlxTypedGroup<Snowflake>;		// all of the snowflakes
 
 	/* TEXT RELATED */
-	public static var feedback:Text;		// the feedback text for secret features
+	public static var txtNumbers:Text;					// the feedback text for repeat numbers.
+	public static var txtNoteNames:Text;				// the feedback text for note names.
+	public static var txtScales:Text;					// the feedback text for scales (modes, keys, pentatonic, etc)
+	public static var txtOptions:Text;					// the feedback text for options (gameplay modes, weather, note length, etc)
 
 	/* TIME-RELATED */
 	public static inline var BLIZZARD:Int = 50;		// the minimum amount of time allowed between snowflake spawns
@@ -64,7 +69,7 @@ class PlayState extends FlxState
 	private static inline var FLURRY:Int = 1000;	// the slowest spawn rate
 	public static var spawnRate:Int = SHOWER;		// the amount of time between snowflake spawns
 	private static inline var SPAWNRATE_DECREMENTER:Int = 5;	// rate at which the time between snowflake spawns is decremented by
-	private static var spawnTimer:Float = 0;			// the timer for determining when to spawn snowflakes
+	private static var spawnTimer:Float = 0;		// the timer for determining when to spawn snowflakes
 
 	public static var flamTimer:Float = 0;			// the timer used to create separation between notes
 	public static var flamNotes:Array<SoundDef> = [];			// the notes to be flammed at any given time
@@ -125,9 +130,11 @@ class PlayState extends FlxState
 		FlxG.worldBounds.y = 78;
 		FlxG.worldBounds.height = FlxG.height - FlxG.worldBounds.y;
 
-		// Add Feedback Text
-		feedback = new Text();
-		add(feedback);
+		// Add Feedback Texts
+		txtOptions   = new Text(0xFFDEE2E2); add(txtOptions);
+		txtNumbers   = new Text(0xFFF1F4F4); add(txtNumbers);
+		txtScales    = new Text(0xFFDEE2E2); add(txtScales);
+		txtNoteNames = new Text(0xFFF1F4F4); add(txtNoteNames);
 
 		// Draw Player
 		player = new Player();
@@ -157,7 +164,6 @@ class PlayState extends FlxState
 		Mode.index = FlxG.random.getObject([0, 4]);
 		Mode.init();
 
-
 		super.create();
 
 		FlxG.watch.add(Reg, "wasLeftStickX");
@@ -166,12 +172,39 @@ class PlayState extends FlxState
 		FlxG.watch.add(Reg, "wasRightStickY");
 	}
 
+	static public function loadSound(Sound:String, Volume:Float, Pan:Float):SoundDef
+	{
+		if (StringTools.endsWith(Sound, "null"))
+			return null;
+
+		var note:Tone = new Tone();
+		note.loadEmbedded(Assets.getSound(getFilename(Sound)), false);
+		note.pan = Pan;
+
+		var toFadeIn:Bool = false;
+
+		if (Playback.attackTimeID > 0) {
+
+			toFadeIn = true;
+			note.volume = 0;
+		}
+		else
+			note.volume = Volume;
+
+		var s:SoundDef = {name: Sound, note: note, toFadeIn: toFadeIn, vol: Volume};
+		sounds.push(s);
+		return s;
+	}
+
 	static public function playSound(Sound:String, Volume:Float, Pan:Float):SoundDef
 	{
-		var note:FlxSound = FlxG.sound.play(Assets.getSound(getFilename(Sound)), Volume, false);
-		note.pan = Pan;
-		var s:SoundDef = {name: Sound, note: note };
-		sounds.push({name: Sound, note: note });
+		var s:SoundDef = loadSound(Sound, Volume, Pan);
+
+		if (s.toFadeIn)
+			s.note.fadeI(Playback.attackTime, Volume);
+		else
+			s.note.play();
+
 		return s;
 	}
 
@@ -186,17 +219,6 @@ class PlayState extends FlxState
 		return filename;
 	}
 
-	static public function loadSound(Sound:String, Volume:Float, Pan:Float):SoundDef
-	{
-		if (StringTools.endsWith(Sound, "null"))
-			return null;
-		var note:FlxSound = FlxG.sound.load(Assets.getSound(getFilename(Sound)), Volume, false);
-		note.pan = Pan;
-		var s:SoundDef = {name: Sound, note: note };
-		sounds.push({name: Sound, note: note });
-		return s;
-	}
-
 	/** Called every frame. */
 	override public function update(elapsed:Float):Void
 	{
@@ -208,7 +230,10 @@ class PlayState extends FlxState
 			{
 				var flamNote:SoundDef = flamNotes[flamCounter];
 
-				flamNote.note.play();
+				if (flamNote.toFadeIn)
+					flamNote.note.fadeI(Playback.attackTime, flamNote.vol);
+				else
+					flamNote.note.play();
 
 				var classToLog:String = "";
 				var volToLog:Float = 0;
@@ -239,42 +264,81 @@ class PlayState extends FlxState
 		}
 
 		spawnTimer -= elapsed;
-		if (spawnTimer <= 0)
-		{
+		if (spawnTimer <= 0) {
+
 			if (spawnRate <= BLIZZARD)
 				spawnRate = BLIZZARD;
 
 			spawnTimer = spawnRate / 1000;
 			SnowflakeManager.manage();
 
-			if (onAutoPilot)
+			// Improv Mode. Some features are shared with Auto Pilot Mode
+			if (inImprovMode || onAutoPilot)
 			{
-				if (player.tongueUp)
-				{
+				// Change Game Mode
+				if (Playback.mode == "Repeat") {
+
+					if (FlxG.random.bool(0.25))
+						Playback.cycle(FlxG.random.bool(50) ? "Left" : "Right");
+					else if (FlxG.random.bool(0.1))
+						Playback.polarity();
+				}
+				else {
+
+					if (Reg.score > 0 && FlxG.random.bool(0.5))
+						Playback.repeat();
+				}
+
+				// Toggle Pentatonic Scale Usage
+				if (FlxG.random.bool(0.4)) Scale.togglePentatonics();
+				// Toggle Note Lengths
+				if (FlxG.random.bool(0.4)) Playback.changeNoteLengths();
+				// Toggle Attack Times
+				if (FlxG.random.bool(0.4)) Playback.changeAttackTimes();
+
+				// Toggle Pedal Point
+				if (Pedal.mode == false && FlxG.random.bool(0.2))
+					Pedal.toggle();
+				else if (Pedal.mode  && FlxG.random.bool(0.5))
+					Pedal.toggle();
+
+				// Toggle Mode and Key Changes
+				if (FlxG.random.bool(0.25))	Mode.cycle(FlxG.random.bool(0.5) ? "Left" : "Right");
+				if (FlxG.random.bool(0.05))	Key.cycle();
+
+				// Toggle Weather
+				// if (FlxG.random.bool(0.05))	changeSnow();
+			}
+
+			// Auto Pilot Mode
+			if (onAutoPilot) {
+
+				// Change Tongue Position
+				if (player.tongueUp) {
+
 					if (FlxG.random.bool(2))
 						player.tongueUp = !player.tongueUp;
 				}
-				else
-				{
+				else {
+
 					if (FlxG.random.bool(10))
-							player.tongueUp = true;
+						player.tongueUp = !player.tongueUp;
 				}
 
+				// Change Player Movement
 				if (FlxG.random.bool(2))
 					autoPilotMovement = FlxG.random.getObject(["Left", "Right", "Still"]);
 			}
 		}
 
-
-
-		super.update(elapsed );
+		super.update(elapsed);
 
 		// Loop Sky Background
 		if (sky.x < -716) sky.x = 0;
 
 		if (HUD.promptText.exists)
 		{
-			#if !flash
+			#if ( !flash && !FLX_NO_KEYBOARD )
 			if (FlxG.keys.justPressed.Y)		Sys.exit(0);
 			else if (FlxG.keys.justPressed.N)	HUD.hideExit();
 			#end
@@ -290,7 +354,7 @@ class PlayState extends FlxState
 			if (Reg.inputJustPressed(Reg.ACT_CHANGEKEY))			Key.cycle();
 			if (Reg.inputJustPressed(Reg.ACT_MUSICMODE_L))			Mode.cycle("Left");
 			if (Reg.inputJustPressed(Reg.ACT_MUSICMODE_R))			Mode.cycle("Right");
-			if (Reg.inputJustPressed(Reg.ACT_PENTATONICS))	 		Scale.toPentatonic();
+			if (Reg.inputJustPressed(Reg.ACT_PENTATONICS))	 		Scale.togglePentatonics();
 			if (Reg.inputJustPressed(Reg.ACT_PEDALPOINT)) 			Pedal.toggle();
 
 			if (Reg.inputJustPressed(Reg.ACT_GAMEMODE_L))			Playback.cycle("Left");
@@ -298,7 +362,8 @@ class PlayState extends FlxState
 			if (Reg.inputJustPressed(Reg.ACT_REVERSE))				Playback.polarity();
 			if (Reg.inputJustPressed(Reg.ACT_RESET))				Playback.resetRestart();
 
-			if (Reg.inputJustPressed(Reg.ACT_NOTE_LENGTH))			Playback.staccato();
+			if (Reg.inputJustPressed(Reg.ACT_NOTE_LENGTH))			Playback.changeNoteLengths();
+			if (Reg.inputJustPressed(Reg.ACT_ATTACK_TIME))			Playback.changeAttackTimes();
 			if (Reg.inputJustPressed(Reg.ACT_NOTE_NAMES))			spellMode();
 			if (Reg.inputJustPressed(Reg.ACT_IMPROV))				improvise();
 			if (Reg.inputJustPressed(Reg.ACT_AUTOPILOT))			autoPilot();
@@ -306,12 +371,10 @@ class PlayState extends FlxState
 			if (Reg.inputJustPressed(Reg.ACT_HUD))					HUD.toggle();
 			if (Reg.inputJustPressed(Reg.ACT_SAVE))					HUD.midi();
 
-			if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.S)
-				MIDI.generate();
-
-			#if !flash
-			if (FlxG.keys.justPressed.F)			FlxG.fullscreen = !FlxG.fullscreen;
-			if (FlxG.keys.justPressed.ESCAPE)		HUD.promptExit();
+			#if (!flash && !FLX_NO_KEYBOARD)
+			if (FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.S)	MIDI.generate();
+			if (FlxG.keys.justPressed.F)								FlxG.fullscreen = !FlxG.fullscreen;
+			if (FlxG.keys.justPressed.ESCAPE)							HUD.promptExit();
 			#end
 		}
 
@@ -323,7 +386,11 @@ class PlayState extends FlxState
 			MIDI.timer = 0;
 			MIDI.logged = false;
 		}
-		Reg.stickCheck();
+
+		#if !FLX_NO_GAMEPAD
+		if(FlxG.gamepads.lastActive != null)
+			Reg.stickCheck();
+		#end
 	}
 
 	/**
@@ -336,7 +403,62 @@ class PlayState extends FlxState
 	public function onLick(SnowRef:Snowflake, PlayerRef: Player):Void
 	{
 		SnowRef.onLick();
-		feedback.onLick(SnowRef);
+
+		// Text Stuff
+		var _text:String = "";
+
+		// Singular Notes Show Numbers in Repeat Mode, otherwise Note Names if in Spell Mode.
+		if (SnowRef.playsNote) {
+
+			if (Playback.mode == "Repeat") {
+
+				if (Playback.reverse == false) {
+
+					if (Playback.index != 0)
+						_text = Std.string(Playback.index);
+					else
+						_text = Std.string(Playback.sequence.length);
+				}
+				else {
+
+					var indexString: Int = Playback.index + 2;
+
+					if (indexString == Playback.sequence.length + 1)
+						_text = "1";
+					else
+						_text = Std.string(indexString);
+				}
+
+				if (_text != "")
+					txtNumbers.show(_text, 5);
+			}
+			else {
+
+				if (PlayState.inSpellMode) {
+
+					_text = Std.string(HUD.enharmonic(SnowRef.noteName, true));
+
+					if (SnowRef.type == "Harmony")
+						_text += "+" + Std.string(HUD.enharmonic(Note.lastHarmony, true));
+					else if (SnowRef.type == "Octave")
+						_text += "+" + Std.string(HUD.enharmonic(Note.lastOctave, true));
+
+					if (Pedal.mode)
+						_text += "/" + Std.string(HUD.enharmonic(Note.lastPedal, true));
+				}
+
+				if (_text != "")
+					txtNoteNames.show(_text);
+			}
+
+		}
+		else {
+
+			// Chords
+			if (PlayState.inSpellMode)
+				txtScales.show(Std.string(HUD.modeName));
+		}
+
 		spawnRate -= SPAWNRATE_DECREMENTER;
 	}
 
@@ -348,7 +470,8 @@ class PlayState extends FlxState
 
 		inSpellMode = !inSpellMode;
 		var status:String = inSpellMode ? "Show" : "Hide";
-		feedback.show(status + " Notes");
+
+		txtOptions.show(status + " Notes");
 	}
 
 	private static function changeSnow():Void
@@ -357,32 +480,20 @@ class PlayState extends FlxState
 
 		spawnRate = spawnRate == SHOWER ? BLIZZARD : spawnRate == BLIZZARD ? FLURRY : SHOWER;
 		txt = spawnRate == SHOWER ? "Shower" : spawnRate == BLIZZARD ? "Blizzard" : "Flurry";
-		feedback.show(txt);
+
+		txtOptions.show(txt);
 	}
 
 	private static function autoPilot():Void
 	{
 		onAutoPilot = !onAutoPilot;
-
-		if (onAutoPilot)
-		{
-			feedback.show("Auto Pilot On");
-			player.tongueUp = true;
-		}
-		else
-		{
-			feedback.show("Auto Pilot Off");
-			player.tongueUp = false;
-		}
+		player.tongueUp = onAutoPilot;
+		txtOptions.show("Auto Pilot " + (onAutoPilot ? "On" : "Off"));
 	}
 
 	private function improvise():Void
 	{
 		inImprovMode = !inImprovMode;
-
-		if (inImprovMode)
-			feedback.show("Improv Mode On");
-		else
-			feedback.show("Improv Mode Off");
+		txtOptions.show("Improv Mode " + (inImprovMode ? "On" : "Off"));
 	}
 }

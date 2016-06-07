@@ -13,12 +13,18 @@ class Playback
 	public static var index:Int = 0;
 	/** Whether or not Playback mode is in reverse. */
 	public static var reverse:Bool;
-	/** The state of staccato mode. */
-	public static var noteLength:String = "Full";
-
+	/** The ID for current Note Length. */
+	public static var noteLengthID:Int = 0;
+	/** The ID for current Attack Time. */
+	public static var attackTimeID:Int = 0;
+	/** The current attackTime amount. */
+	public static var attackTime:Float = 0;
+	/** The attackTime lengths. */
+	public static var attackTimes:Array<Float> = [0, 0.5, 1, 2];
 	/** Cycle through the playback modes. */
 	public static function cycle(direction:String = "Left"):Void
 	{
+
 		if (direction == "Left")
 		{
 			if (mode == "Detour")
@@ -41,36 +47,38 @@ class Playback
 		sequence = [];
 		index = 0;
 		reverse = false;
-		PlayState.feedback.show(mode);
+
+		PlayState.txtOptions.show(mode);
 	}
 
 	public static function repeat():Void
 	{
 		mode = "Repeat";
-		PlayState.feedback.show(mode);
+		PlayState.txtOptions.show(mode);
 	}
 
 	public static function detour():Void
 	{
 		mode = "Detour";
-		PlayState.feedback.show(mode);
+		PlayState.txtOptions.show(mode);
 	}
 
 	/** Reset a sequence currently in writing, or restart a repeat sequence. */
 	public static function resetRestart():Void
 	{
+
 		if (mode != "Detour")
 		{
 			if (mode == "Write")
 			{
 				sequence = [];
 				index = 0;
-				PlayState.feedback.show("Reset");
+				PlayState.txtOptions.show("Reset");
 			}
 			else
 			{
 				index = 0;
-				PlayState.feedback.show("Restart");
+				PlayState.txtOptions.show("Restart");
 			}
 		}
 	}
@@ -78,6 +86,7 @@ class Playback
 	/** Reverse the note order of repeat sequence. */
 	public static function polarity():Void
 	{
+
 		if (mode == "Repeat")
 		{
 			reverse = !reverse;
@@ -88,7 +97,7 @@ class Playback
 				if (index < 0)
 					index = index + sequence.length;
 
-				PlayState.feedback.show("Backwards");
+				PlayState.txtOptions.show("Backwards");
 			}
 			else
 			{
@@ -96,21 +105,28 @@ class Playback
 				if (index > sequence.length - 1)
 					index = index - sequence.length;
 
-				PlayState.feedback.show("Forwards");
+				PlayState.txtOptions.show("Forwards");
 			}
 		}
 	}
 
-	public static function staccato():Void
-	{
-		if (noteLength == "Full")
-			noteLength = "Half";
-		else if (noteLength == "Half")
-			noteLength = "Random";
-		else
-			noteLength = "Full";
+	public static function changeNoteLengths():Void {
 
-		PlayState.feedback.show("Note Length: " + noteLength);
+		var options:Array<String> = ["Random", "Short", "Medium", "Full"];
+		noteLengthID = (noteLengthID + 1) % options.length;
+		PlayState.txtOptions.show("Note Length: " + options[noteLengthID]);
+	}
+
+	public static function changeAttackTimes():Void {
+
+		var options:Array<String> = ["Fast", "Medium", "Slow", "Molasses"];
+		attackTimeID = (attackTimeID + 1) % options.length;
+		PlayState.txtOptions.show("Attack Time: " + options[attackTimeID]);
+
+		if (attackTimeID != 0)
+			noteLengthID = 3;
+
+		attackTime = attackTimes[attackTimeID];
 	}
 
 }

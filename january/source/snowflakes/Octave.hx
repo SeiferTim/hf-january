@@ -3,10 +3,7 @@ import flixel.FlxG;
 import flixel.system.FlxSound;
 import music.Note;
 
-class Octave extends Snowflake
-{
-
-	//[Embed(source="../assets/art/flakes/octave.png")] private var sprite: Class;
+class Octave extends Snowflake {
 
 	/** Default volume level for the octave tone (not the default note). */
 	public static var VOLUME:Float = Note.MAX_VOLUME * 0.33;
@@ -61,10 +58,10 @@ class Octave extends Snowflake
 			var modifiedNote:String = "_" + octaveTone;
 			octave = PlayState.loadSound(modifiedNote, Octave.VOLUME / SnowflakeManager._volumeMod, -1 * pan);
 		}
-		PlayState.flamNotes.push({name: octave.name, note: octave.note});
+		PlayState.flamNotes.push(octave);
 		PlayState.flamTimer = PlayState.flamRate / 1000;
 
-		inStaccato(octave.note);
+		setFadeAmt(octave.note);
 
 		// LOGS
 		Note.lastOctave = octaveTone;

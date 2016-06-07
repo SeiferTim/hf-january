@@ -3,6 +3,7 @@ package;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.text.FlxText;
+import flixel.util.FlxColor;
 import music.Playback;
 import music.Note;
 import music.Pedal;
@@ -18,7 +19,7 @@ class Text extends FlxText
 	/** The gutter size, used to keep text off screen edges. */
 	public static inline var GUTTER: Int = 5;
 
-	public function new()
+	public function new(_color: FlxColor = 0xFFFFFFFF)
 	{
 		x = -15;
 		y = -15;
@@ -28,7 +29,7 @@ class Text extends FlxText
 		velocity.y = -8;
 		font = AssetPaths.frucade__ttf;
 		alpha = 0;
-
+		color = _color;
 	}
 
 	/**
@@ -88,10 +89,10 @@ class Text extends FlxText
 
 		// Show the new text feedback.
 		if (_text != "")
-			show(_text);
+			show(_text, Playback.mode == "Repeat" ? 5 : 10);
 	}
 
-	public function show(newText: String, offset: Int = 7):Void
+	public function show(newText: String, offset: Int = 10):Void
 	{
 		lifespan = 1;
 		text = newText;
@@ -131,7 +132,7 @@ class Text extends FlxText
 		if (lifespan > 0)
 			lifespan -= elapsed;
 		else
-			alpha -= elapsed;
+			alpha -= (elapsed/2);
 
 		if (alpha < 0)
 			alpha = 0;

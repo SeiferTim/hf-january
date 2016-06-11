@@ -20,14 +20,12 @@ class Vamp extends Snowflake {
 	public override function onLick():Void
 	{
 		super.onLick();
-
 		playChord();
 	}
 
 	public override function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-
 		animation.play("default");
 	}
 

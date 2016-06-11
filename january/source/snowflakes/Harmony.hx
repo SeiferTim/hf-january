@@ -70,14 +70,14 @@ class Harmony extends Snowflake {
 
 		if (SnowflakeManager.timbre == "Primary")
 		{
-			harmony = PlayState.loadSound(harmonyTone, Harmony.VOLUME, -1 * pan);
+			harmony = PlayState.loadSound(harmonyTone, Harmony.VOLUME, pan);
 
 
 		}
 		else
 		{
 			var modifiedHarmony:String = "_" + harmonyTone;
-			harmony = PlayState.loadSound(modifiedHarmony, Harmony.VOLUME / SnowflakeManager._volumeMod, -1 * pan);
+			harmony = PlayState.loadSound(modifiedHarmony, Harmony.VOLUME / SnowflakeManager._volumeMod, pan);
 
 		}
 

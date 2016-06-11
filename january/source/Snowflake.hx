@@ -28,7 +28,7 @@ class Snowflake extends FlxSprite {
 	/** Volume for the Note. */
 	var volume:Float = 0;
 	/** Pan Value for the Note, measured in -1 to 1. */
-	var pan:Float = FlxG.random.float(-1, 1);
+	var pan:Float = 0; //FlxG.random.float(-1, 1);
 	/** Whether the Snowflake in question allows for a pedal tone. */
 	var pedalAllowed:Bool = false;
 	/** Whether the Snowflake in question plays a note. */
@@ -114,6 +114,8 @@ class Snowflake extends FlxSprite {
 			PlayState.scores.set(type, PlayState.scores.get(type) + 1);
 
 		lastLickedType = type;
+
+		pan = getLocationalPan();
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -239,7 +241,7 @@ class Snowflake extends FlxSprite {
 		var chordTones:Array<String> =  FlxG.random.getObject(Mode.current.chords);
 
 		// PUSH NOTES TO FLAM TIMER
-		calculatePan();
+		pan = getLocationalPan();
 
 		var s1:PlayState.SoundDef;
 		var s2:PlayState.SoundDef;
@@ -286,11 +288,11 @@ class Snowflake extends FlxSprite {
 			var s4:PlayState.SoundDef;
 
 			if (SnowflakeManager.timbre == "Primary")
-				s4 = PlayState.loadSound(Intervals.loadout.get(chordTones[3]), Chord.VOLUME, -1 * pan);
+				s4 = PlayState.loadSound(Intervals.loadout.get(chordTones[3]), Chord.VOLUME, pan);
 			else
 			{
 				var _s4: String = "_" + Intervals.loadout.get(chordTones[3]);
-				s4 = PlayState.loadSound(_s4, Chord.VOLUME / SnowflakeManager._volumeMod, -1 * pan);
+				s4 = PlayState.loadSound(_s4, Chord.VOLUME / SnowflakeManager._volumeMod, pan);
 			}
 			PlayState.flamNotes.push(s4);
 
@@ -370,10 +372,10 @@ class Snowflake extends FlxSprite {
 	// MUSIC HELPERS ///////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	private function calculatePan():Void
-	{
+	private function getLocationalPan():Float {
+
 		// Convert x position to pan position.
-		pan = 2 * ((this.x / FlxG.width)) - 1;
+		return 2 * ((this.x / FlxG.width)) - 1;
 	}
 
 	private function setFadeAmt(sound: Tone):Void

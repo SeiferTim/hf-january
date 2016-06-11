@@ -64,12 +64,11 @@ class PlayState extends FlxState
 	public static var txtOptions:Text;					// the feedback text for options (gameplay modes, weather, note length, etc)
 
 	/* TIME-RELATED */
-	public static inline var BLIZZARD:Int = 50;		// the minimum amount of time allowed between snowflake spawns
-	private static inline var SHOWER:Int = 250;		// the initial spawn rate for snowflakes
-	private static inline var FLURRY:Int = 1000;	// the slowest spawn rate
-	public static var spawnRate:Int = SHOWER;		// the amount of time between snowflake spawns
+	public static var WEATHER = [ {name: "Flurry", freq: 1000}, {name: "Shower", freq: 250}, {name: "Blizzard",	freq: 50}];
+	public static var weatherID = 0;
+	public static var spawnRate:Int = WEATHER[weatherID].freq;	// the amount of time between snowflake spawns
 	private static inline var SPAWNRATE_DECREMENTER:Int = 5;	// rate at which the time between snowflake spawns is decremented by
-	private static var spawnTimer:Float = 0;		// the timer for determining when to spawn snowflakes
+	private static var spawnTimer:Float = 0;					// the timer for determining when to spawn snowflakes
 
 	public static var flamTimer:Float = 0;			// the timer used to create separation between notes
 	public static var flamNotes:Array<SoundDef> = [];			// the notes to be flammed at any given time
@@ -266,8 +265,8 @@ class PlayState extends FlxState
 		spawnTimer -= elapsed;
 		if (spawnTimer <= 0) {
 
-			if (spawnRate <= BLIZZARD)
-				spawnRate = BLIZZARD;
+			if (spawnRate <= WEATHER[WEATHER.length - 1].freq)
+				spawnRate = WEATHER[WEATHER.length - 1].freq;
 
 			spawnTimer = spawnRate / 1000;
 			SnowflakeManager.manage();
@@ -476,12 +475,9 @@ class PlayState extends FlxState
 
 	private static function changeSnow():Void
 	{
-		var txt:String = "";
-
-		spawnRate = spawnRate == SHOWER ? BLIZZARD : spawnRate == BLIZZARD ? FLURRY : SHOWER;
-		txt = spawnRate == SHOWER ? "Shower" : spawnRate == BLIZZARD ? "Blizzard" : "Flurry";
-
-		txtOptions.show(txt);
+		weatherID = (weatherID + 1) % WEATHER.length;
+		spawnRate = WEATHER[weatherID].freq;
+		txtOptions.show(WEATHER[weatherID].name);
 	}
 
 	private static function autoPilot():Void

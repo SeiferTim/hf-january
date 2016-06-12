@@ -249,9 +249,9 @@ class Snowflake extends FlxSprite {
 
 		if (SnowflakeManager.timbre == "Primary")
 		{
-			s1 = PlayState.loadSound(Intervals.loadout.get(chordTones[0]), Chord.VOLUME, 0);
-			s2 = PlayState.loadSound(Intervals.loadout.get(chordTones[1]), Chord.VOLUME, -1);
-			s3 = PlayState.loadSound(Intervals.loadout.get(chordTones[2]), Chord.VOLUME, 1);
+			s1 = PlayState.loadSound(Intervals.loadout.get(chordTones[0]), Chord.VOLUME, pan);
+			s2 = PlayState.loadSound(Intervals.loadout.get(chordTones[1]), Chord.VOLUME, pan);
+			s3 = PlayState.loadSound(Intervals.loadout.get(chordTones[2]), Chord.VOLUME, pan);
 
 		}
 		else
@@ -261,9 +261,9 @@ class Snowflake extends FlxSprite {
 			var _s3: String = "_" + Intervals.loadout.get(chordTones[2]);
 			var _vol: Float = Chord.VOLUME/SnowflakeManager._volumeMod;
 
-			s1 = PlayState.loadSound(_s1, _vol, 0);
-			s2 = PlayState.loadSound(_s2, _vol, -1);
-			s3 = PlayState.loadSound(_s3, _vol, 1);
+			s1 = PlayState.loadSound(_s1, _vol, pan);
+			s2 = PlayState.loadSound(_s2, _vol, pan);
+			s3 = PlayState.loadSound(_s3, _vol, pan);
 
 		}
 

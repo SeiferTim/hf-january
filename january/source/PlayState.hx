@@ -12,6 +12,7 @@ import flixel.ui.FlxButton;
 import flixel.math.FlxMath;
 import flixel.util.FlxArrayUtil;
 import flixel.util.FlxTimer;
+import flixel.FlxCamera;
 import music.Key;
 import music.MIDI;
 import music.Mode;
@@ -84,14 +85,23 @@ class PlayState extends FlxState
 	/** Initialize game, create and add everything. */
 	override public function create():Void
 	{
+
 		Reg.score = SCORE_INIT;
 		FlxG.sound.volume = 1;
+
+		var ambL:FlxSound = new FlxSound();
+		var ambR:FlxSound = new FlxSound();
+
 		#if flash
-		FlxG.sound.playMusic(AssetPaths.ambience__mp3, 0.025);
+		ambL.loadEmbedded(AssetPaths.ambience_L__mp3, true);
+		ambR.loadEmbedded(AssetPaths.ambience_R__mp3, true);
 		#else
-		FlxG.sound.playMusic(AssetPaths.ambience__ogg, 0.025);
+		ambL.loadEmbedded(AssetPaths.ambience_L__ogg, true);
+		ambR.loadEmbedded(AssetPaths.ambience_R__ogg, true);
 		#end
-		FlxG.sound.music.fadeIn(2, 0, 0.025);
+
+		ambL.pan = -1; ambL.volume = 0; ambL.fadeIn(2, 0, 0.025);
+		ambR.pan = 1;  ambR.volume = 0; ambR.fadeIn(2, 0, 0.025);
 
 		// Set Channel 1 Instrument to Guitar
 		MIDI.trackEvents.push(0);

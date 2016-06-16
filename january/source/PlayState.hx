@@ -85,7 +85,10 @@ class PlayState extends FlxState
 	/** Initialize game, create and add everything. */
 	override public function create():Void
 	{
-
+		#if !flash
+		FlxG.autoPause = false;
+		#end
+		
 		Reg.score = SCORE_INIT;
 		FlxG.sound.volume = 1;
 

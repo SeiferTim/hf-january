@@ -12,21 +12,20 @@
     <movie minorVersion="0" />
     <movie platform="Lime" />
     <movie background="000000" />
-    <!-- <movie background="75899C" /> -->
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="T:\HaxeToolkit\haxe\lib\flixel\4,0,1" />
-    <class path="T:\HaxeToolkit\haxe\lib\openfl\3,6,1" />
-    <class path="T:\HaxeToolkit\haxe\lib\lime\2,9,1" />
-    <class path="T:\HaxeToolkit\haxe\lib\hscript\2,0,7" />
+    <class path="C:\HaxeToolkit\haxe\lib\flixel\git" />
+    <class path="C:\HaxeToolkit\haxe\lib\openfl\3,6,1" />
+    <class path="C:\HaxeToolkit\haxe\lib\lime\2,9,1" />
+    <class path="C:\HaxeToolkit\haxe\lib\hscript\2,0,7" />
     <class path="source" />
-    <class path="T:\HaxeToolkit\haxe\lib\openfl\3,6,1\extern" />
+    <class path="C:\HaxeToolkit\haxe\lib\openfl\3,6,1\extern" />
     <class path="export\flash\haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="flixel=4.0.1&#xA;openfl=3.6.1&#xA;lime=2.9.1&#xA;hscript=2.0.7&#xA;next&#xA;openfl-next&#xA;tools=2.9.1&#xA;no-compilation&#xA;openfl-flash&#xA;FLX_NO_SOUND_TRAY&#xA;web&#xA;display" />
+    <option directives="flixel=4.0.1&#xA;openfl=3.6.1&#xA;lime=2.9.1&#xA;hscript=2.0.7&#xA;HXCPP_QUIET&#xA;next&#xA;openfl-next&#xA;tools=2.9.1&#xA;no-compilation&#xA;openfl-flash&#xA;FLX_NO_SOUND_TRAY&#xA;web&#xA;display" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />
